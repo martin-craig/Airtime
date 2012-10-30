@@ -7,7 +7,6 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-
 showhelp () {
     echo "Usage: airtime-install [options]
 --help|-h                         Displays usage information.
