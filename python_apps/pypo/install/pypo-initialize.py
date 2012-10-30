@@ -79,25 +79,25 @@ try:
 
     print "* Detecting OS: ...",
     (codename, fullname) = get_os_codename()
-    print " Found %s (%s) on %s architecture" % (fullname, codename, arch)
 
-    print " * Creating symlink to Liquidsoap binary"
-
-    p = Popen("which liquidsoap", shell=True, stdout=PIPE)
-    liq_path = p.communicate()[0].strip()
-    symlink_path = "/usr/bin/airtime-liquidsoap"
-
-    if p.returncode == 0:
-        try:
-            os.unlink(symlink_path)
-        except Exception:
-            #liq_path DNE, which is OK.
-            pass
-
-        os.symlink(liq_path, symlink_path)
+    print " Found %s (%s) on %s architecture" % (fullname, codename, arch) 
+    
+    #print " * Installing Liquidsoap binary"
+    #if (os.path.exists("%s/liquidsoap_%s_%s"%(PATH_LIQUIDSOAP_BIN, codename, arch))):
+    #    shutil.copy("%s/liquidsoap_%s_%s"%(PATH_LIQUIDSOAP_BIN, codename, arch), "%s/liquidsoap"%PATH_LIQUIDSOAP_BIN)
+    #else:
+        #print "Unsupported system architecture."
+        #sys.exit(1)
+        
+    #generate liquidsoap config file
+    #access the DB and generate liquidsoap.cfg under /etc/airtime/
+    ac = api_client.api_client_factory(config)
+    ss = ac.get_stream_setting()
+        
+    if ss is not None:
+        generate_liquidsoap_config(ss)
     else:
-        print " * Liquidsoap binary not found!"
-        sys.exit(1)
+        print "Unable to connect to the Airtime server."
 
     #initialize init.d scripts
     subprocess.call("update-rc.d airtime-playout defaults >/dev/null 2>&1", shell=True)
