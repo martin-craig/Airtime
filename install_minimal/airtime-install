@@ -172,10 +172,7 @@ set -e
 echo -e "\n******************************** Install Begin *********************************"
 rm -rf "/usr/lib/airtime"
 if [ "$python_service" -eq "0" ]; then
-    $AIRTIMEROOT/python_apps/python-virtualenv/virtualenv-install.sh
-
-    virtualenv_bin="/usr/lib/airtime/airtime_virtualenv/bin/"
-    . ${virtualenv_bin}activate
+    rm -rf "/usr/lib/airtime"
     python $AIRTIMEROOT/python_apps/create-pypo-user.py
 fi
 
@@ -201,12 +198,6 @@ set -e
 export airtime_service_start='t'
 $SCRIPTPATH/include/airtime-copy-files.sh
 $SCRIPTPATH/include/airtime-initialize.sh $@
-
-if [ "$mediamonitor" = "t" -o "$pypo" = "t" ]; then
-    #deactivate virtualenv
-    deactivate
-fi
-
 
 /usr/lib/airtime/utils/rabbitmq-update-pid.sh > /dev/null
 
