@@ -9,24 +9,6 @@ function getFileName(ext){
     return filename;
 }
 
-function setFlashFileName( nButton, oConfig, oFlash ) {
-    var filename = getFileName(oConfig.sExtends)
-    oFlash.setFileName( filename );
-    if(oConfig.sExtends == "pdf"){
-        this.fnSetText( oFlash,
-            "title:"+ this.fnGetTitle(oConfig) +"\n"+
-            "message:"+ oConfig.sPdfMessage +"\n"+
-            "colWidth:"+ this.fnCalcColRatios(oConfig) +"\n"+
-            "orientation:"+ oConfig.sPdfOrientation +"\n"+
-            "size:"+ oConfig.sPdfSize +"\n"+
-            "--/TableToolsOpts--\n" +
-            this.fnGetTableData(oConfig));
-    }else{
-        this.fnSetText( oFlash,
-                this.fnGetTableData(oConfig));
-    }
-}
-
 var AIRTIME = (function(AIRTIME) {
     var mod;
     
@@ -94,17 +76,7 @@ var AIRTIME = (function(AIRTIME) {
             "sDom": 'lf<"dt-process-rel"r><"H"T><"dataTables_scrolling"t><"F"ip>', 
             
             "oTableTools": {
-                "sSwfPath": "/js/datatables/plugin/TableTools/swf/copy_cvs_xls_pdf.swf",
                 "aButtons": [
-                             "copy",
-                             {
-                                 "sExtends": "csv",
-                                 "fnClick": setFlashFileName
-                             },
-                             {
-                                 "sExtends": "pdf",
-                                 "fnClick": setFlashFileName
-                             },
                              "print"
                          ]
             }
