@@ -136,7 +136,7 @@ class Application_Model_StreamSetting
                 ." FROM cc_stream_setting"
                 ." WHERE keyname not like '%_error'";
 
-        $rows = $con->query($sql)->fetchAll();
+        $rows = $con->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
         $exists = array();
 
