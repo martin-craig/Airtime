@@ -315,13 +315,14 @@ end
 
 if s1_enable then
     format_stereo = if s1_type == 'mp3' then
-                 %mp3(bitrate = S1_BITRATE, stereo = true)
-             else %vorbis(quality = 0.9, channels = 2) end
+                 %mp3(bitrate = S1_MP3_BITRATE, stereo = true)
+             else %vorbis(quality = S1_VORBIS_QUALITY, channels = 2) end
 
     format_mono = if s1_type == 'mp3' then
-                 %mp3(bitrate = S1_BITRATE, stereo = false)
-             else %vorbis(quality = 0.9, channels = 1) end
+                 %mp3(bitrate = S1_MP3_BITRATE, stereo = false)
+             else %vorbis(quality = S1_VORBIS_QUALITY, channels = 1) end
 
+    stereo = s1_channels == "stereo"
 
 
 
@@ -336,17 +337,18 @@ if s1_enable then
 
     output_to(s1_output, s1_host, s1_port, s1_pass, s1_type,
                 s1_mount, s1_url, s1_description, s1_genre, s1_user, s, "1",
-                s1_connected, s1_name, S1_STEREO, (format_mono, format_stereo))
+                s1_connected, s1_name, stereo, (format_mono, format_stereo))
 end
 if s2_enable then
     format_stereo = if s2_type == 'mp3' then
-                 %mp3(bitrate = S2_BITRATE, stereo = true)
-             else %vorbis(quality = 0.9, channels = 2) end
+                 %mp3(bitrate = S2_MP3_BITRATE, stereo = true)
+             else %vorbis(quality = S2_VORBIS_QUALITY, channels = 2) end
 
     format_mono = if s2_type == 'mp3' then
-                 %mp3(bitrate = S2_BITRATE, stereo = false)
-             else %vorbis(quality = 0.9, channels = 1) end
+                 %mp3(bitrate = S2_MP3_BITRATE, stereo = false)
+             else %vorbis(quality = S2_VORBIS_QUALITY, channels = 1) end
 
+    stereo = s2_channels == "stereo"
 
     if s2_output == 'shoutcast' then
         s2_namespace := "shoutcast_stream_2"
@@ -359,16 +361,18 @@ if s2_enable then
 
     output_to(s2_output, s2_host, s2_port, s2_pass, s2_type,
                 s2_mount, s2_url, s2_description, s2_genre, s2_user, s, "2",
-                s2_connected, s2_name, S2_STEREO, (format_mono, format_stereo))
+                s2_connected, s2_name, stereo, (format_mono, format_stereo))
 end
 if s3_enable then
     format_stereo = if s3_type == 'mp3' then
-                 %mp3(bitrate = S3_BITRATE, stereo = true)
-             else %vorbis(quality = 0.9, channels = 2) end
+                 %mp3(bitrate = S3_MP3_BITRATE, stereo = true)
+             else %vorbis(quality = S3_VORBIS_QUALITY, channels = 2) end
 
     format_mono = if s3_type == 'mp3' then
-                 %mp3(bitrate = S3_BITRATE, stereo = false)
-             else %vorbis(quality = 0.9, channels = 1) end
+                 %mp3(bitrate = S3_MP3_BITRATE, stereo = false)
+             else %vorbis(quality = S3_VORBIS_QUALITY, channels = 1) end
+
+    stereo = s3_channels == "stereo"
 
 
     if s3_output == 'shoutcast' then
@@ -382,7 +386,7 @@ if s3_enable then
 
     output_to(s3_output, s3_host, s3_port, s3_pass, s3_type,
                 s3_mount, s3_url, s3_description, s3_genre, s3_user, s, "3",
-                s3_connected, s3_name, S3_STEREO, (format_mono, format_stereo))
+                s3_connected, s3_name, stereo, (format_mono, format_stereo))
 end
 
 command = "/usr/lib/airtime/pypo/bin/liquidsoap_scripts/notify.sh --liquidsoap-started &"
