@@ -99,6 +99,8 @@ if [ "$web" = "t" ]; then
     cp -R $AIRTIMEROOT/airtime_mvc/* /usr/share/airtime/
     rm -f /etc/logrotate.d/airtime-php
     cp $AIRTIMEROOT/airtime_mvc/build/airtime-php.logrotate /etc/logrotate.d/airtime-php
+    rm -f /usr/share/airtime/public/js/libs/jquery.min.js
+    ln -s /usr/share/javascript/jquery/jquery.min.js /usr/share/airtime/public/js/libs/jquery.min.js
 fi
 
 echo "* Creating /var/log/airtime"
