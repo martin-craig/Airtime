@@ -173,6 +173,10 @@ class PypoFetch(Thread):
             command += "live_dj_"
         elif sourcename == "scheduled_play":
             command += "scheduled_play_"
+        elif sourcename == "hp_scheduled_play":
+            command += "hp_scheduled_play_"
+        else:
+            raise Exception("Unknown sourcename '%s'", sourcename)
 
         if status == "on":
             command += "start\n"

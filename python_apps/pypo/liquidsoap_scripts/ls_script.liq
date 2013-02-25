@@ -127,6 +127,7 @@ ignore(output.dummy(default, fallible=true))
 master_dj_enabled = ref false
 live_dj_enabled = ref false
 scheduled_play_enabled = ref false
+hp_scheduled_play_enabled = ref false
 
 def make_master_dj_available()
     master_dj_enabled := true
@@ -151,6 +152,15 @@ end
 
 def make_scheduled_play_unavailable()
     scheduled_play_enabled := false
+end
+
+def make_hp_scheduled_play_available()
+    hp_scheduled_play_enabled := true
+    just_switched := true
+end
+
+def make_hp_scheduled_play_unavailable()
+    hp_scheduled_play_enabled := false
 end
 
 def update_source_status(sourcename, status) =
@@ -230,8 +240,9 @@ def append_dj_inputs(master_harbor_input_port,
 
         switch(id="master_dj_switch", 
             track_sensitive=false, 
-            transitions=[transition, transition, transition], 
+            transitions=[transition, transition, transition, transition], 
             [({!master_dj_enabled},master_dj), 
+            ({!hp_scheduled_play_enabled}, s), 
             ({!live_dj_enabled},dj_live), 
             ({true}, s)])
 
@@ -268,16 +279,22 @@ def append_dj_inputs(master_harbor_input_port,
 
         switch(id="live_dj_switch", 
             track_sensitive=false, 
-            transitions=[transition, transition], 
-            [({!live_dj_enabled},dj_live), ({true}, s)])
+            transitions=[transition, transition, transition], 
+            [
+                ({!hp_scheduled_play_enabled}, s), 
+                ({!live_dj_enabled},dj_live),
+                ({true}, s)])
     else
         s
     end
 end
 
-s = switch(id="default_switch", track_sensitive=false,
-    transitions=[transition_default, transition],
-    [({!scheduled_play_enabled}, stream_queue),({true},default)])
+s = switch(id="default_switch", 
+        track_sensitive=false,
+        transitions=[transition_default, transition],
+        [({!scheduled_play_enabled}, stream_queue),
+            ({true},default)]
+)
 
 s = append_dj_inputs(master_live_stream_port, master_live_stream_mp,
     dj_live_stream_port, dj_live_stream_mp, s)
@@ -316,6 +333,17 @@ server.register(namespace="streams",
     usage="scheduled_play_start",
     "scheduled_play_start",
     fun (s) -> begin log("streams.scheduled_play_start") make_scheduled_play_available() "Done." end)
+server.register(namespace="streams",
+    description="Start High Priority Scheduled Play source.",
+    usage="hp_scheduled_play_start",
+    "hp_scheduled_play_start",
+    fun (s) -> begin log("streams.hp_scheduled_play_start") make_hp_scheduled_play_available() "Done." end)
+server.register(namespace="streams",
+    description="Stop High Priority Scheduled Play source.",
+    usage="hp_scheduled_play_stop",
+    "hp_scheduled_play_stop",
+    fun (s) -> begin log("streams.hp_scheduled_play_stop") make_hp_scheduled_play_unavailable() "Done." end)
+
 
 if output_sound_device then
     success = ref false
