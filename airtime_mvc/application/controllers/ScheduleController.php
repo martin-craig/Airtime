@@ -398,6 +398,7 @@ class ScheduleController extends Zend_Controller_Action
         $master_dj = Application_Model_Preference::GetSourceStatus("master_dj");
 
         $scheduled_play_switch = Application_Model_Preference::GetSourceSwitchStatus("scheduled_play");
+        $hp_scheduled_play_switch = Application_Model_Preference::GetSourceSwitchStatus("hp_scheduled_play");
         $live_dj_switch = Application_Model_Preference::GetSourceSwitchStatus("live_dj");
         $master_dj_switch = Application_Model_Preference::GetSourceSwitchStatus("master_dj");
 
@@ -409,6 +410,7 @@ class ScheduleController extends Zend_Controller_Action
         $switch_status['live_dj_source'] = $live_dj_switch;
         $switch_status['master_dj_source'] = $master_dj_switch;
         $switch_status['scheduled_play'] = $scheduled_play_switch;
+        $switch_status['hp_scheduled_play'] = $hp_scheduled_play_switch;
         $this->view->switch_status = $switch_status;
 
         $this->view->entries = $range;

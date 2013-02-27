@@ -33,6 +33,12 @@
         <div class="line-to-on-air"></div>
       </li>
       <li>
+        <div id="hp_scheduled_play_div" class="source-label"><? echo " "._("HP Scheduled Play") ?></div>
+        <div class="line-to-switch"></div>
+        <a href="#" id="hp_scheduled_play" class="source-switch-button" onclick="setSwitchListener(this);"><span><?php echo $this->hp_scheduled_play_switch?></span></a>
+        <div class="line-to-on-air"></div>
+      </li>
+      <li>
         <div id="live_dj_div" class="source-label">
         <a id="live_dj" class="source-kick-button" onclick="kickSource(this)"></a>
           <? echo _("Show Source")?>

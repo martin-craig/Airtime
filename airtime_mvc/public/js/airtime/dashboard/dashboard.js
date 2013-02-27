@@ -18,6 +18,7 @@ var uiUpdateInterval = 200;
 var master_dj_on_air = false;
 var live_dj_on_air = false;
 var scheduled_play_on_air = false;
+var hp_scheduled_play_on_air = false;
 var scheduled_play_source = false;
 
 //keep track of how many UI refreshes the ON-AIR light has been off for.
@@ -72,7 +73,7 @@ function updateProgressBarValue(){
     $('#progress-show').attr("style", "width:"+showPercentDone+"%");
 
     var songPercentDone = 0;
-    var scheduled_play_div = $("#scheduled_play_div");
+    var scheduled_play_div = $("#scheduled_play_div, #hp_scheduled_play_div");
     var scheduled_play_line_to_switch = scheduled_play_div.parent().find(".line-to-switch");
     
     if (currentSong !== null){	
@@ -293,8 +294,15 @@ function parseSwitchStatus(obj){
     }else{
         scheduled_play_on_air = false;
     }
+
+    if(obj.hp_scheduled_play == "on"){
+        hp_scheduled_play_on_air = true;
+    }else{
+        hp_scheduled_play_on_air = false;
+    }
     
     var scheduled_play_switch = $("#scheduled_play.source-switch-button");
+    var hp_scheduled_play_switch = $("#hp_scheduled_play.source-switch-button");
     var live_dj_switch = $("#live_dj.source-switch-button");
     var master_dj_switch = $("#master_dj.source-switch-button");
     
@@ -303,6 +311,13 @@ function parseSwitchStatus(obj){
         scheduled_play_switch.addClass("active");
     }else{
         scheduled_play_switch.removeClass("active");
+    }
+
+    hp_scheduled_play_switch.find("span").html(obj.hp_scheduled_play);
+    if(hp_scheduled_play_on_air){
+        hp_scheduled_play_switch.addClass("active");
+    }else{
+        hp_scheduled_play_switch.removeClass("active");
     }
     
     live_dj_switch.find("span").html(obj.live_dj_source);
@@ -321,7 +336,7 @@ function parseSwitchStatus(obj){
 }
 
 function controlOnAirLight(){
-    if ((scheduled_play_on_air && scheduled_play_source) || live_dj_on_air || master_dj_on_air) {
+    if (((scheduled_play_on_air || hp_scheduled_play_on_air) && scheduled_play_source) || live_dj_on_air || master_dj_on_air) {
         $('#on-air-info').attr("class", "on-air-info on");
         onAirOffIterations = 0;
     } else if (onAirOffIterations < 20) {
@@ -339,23 +354,27 @@ function controlSwitchLight(){
     var live_li= $("#live_dj_div").parent();
     var master_li = $("#master_dj_div").parent();
     var scheduled_play_li = $("#scheduled_play_div").parent();
-    
-    if((scheduled_play_on_air && scheduled_play_source) && !live_dj_on_air && !master_dj_on_air){
-        scheduled_play_li.find(".line-to-on-air").attr("class", "line-to-on-air on");
-        live_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
-        master_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
-    }else if(live_dj_on_air && !master_dj_on_air){
-        scheduled_play_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
-        live_li.find(".line-to-on-air").attr("class", "line-to-on-air on");
-        master_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
-    }else if(master_dj_on_air){
-        scheduled_play_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
-        live_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
-        master_li.find(".line-to-on-air").attr("class", "line-to-on-air on");
-    }else{
-        scheduled_play_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
-        live_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
-        master_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
+    var hp_scheduled_play_li = $("#hp_scheduled_play_div").parent();
+
+
+    live_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
+    master_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
+    scheduled_play_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
+    hp_scheduled_play_li.find(".line-to-on-air").attr("class", "line-to-on-air off");
+
+    var elem = null;
+    if (master_dj_on_air) {
+        elem = master_li;
+    } else if (hp_scheduled_play_on_air && scheduled_play_source) {
+        elem = hp_scheduled_play_li;
+    } else if (live_dj_on_air) {
+        elem = live_li;
+    } else if (scheduled_play_on_air && scheduled_play_source) {
+        elem = scheduled_play_li;
+    }
+
+    if (elem) {
+        elem.find(".line-to-on-air").attr("class", "line-to-on-air on");
     }
 }
 
