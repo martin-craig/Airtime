@@ -33,8 +33,6 @@ s2_namespace = ref ''
 s3_namespace = ref ''
 just_switched = ref false
 
-#stream_harbor_pass = list.hd(get_process_lines('pwgen -s -N 1 -n 20'))
-
 %include "ls_lib.liq"
 
 queue = audio_to_stereo(id="queue_src", request.equeue(id="queue", length=0.5))
@@ -295,10 +293,9 @@ s = append_dj_inputs(master_live_stream_port, master_live_stream_mp,
     dj_live_stream_port, dj_live_stream_mp, stream_queue)
 
 s = fallback(id="default_fallback", 
-        track_sensitive=false,
-        transitions=[transition_default, transition],
-        [s, default]
-)
+    track_sensitive=false,
+    transitions=[transition_default, transition],
+    [s, default])
 
 # Attach a skip command to the source s:
 
