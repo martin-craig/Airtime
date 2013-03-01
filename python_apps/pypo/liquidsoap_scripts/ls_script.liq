@@ -238,13 +238,13 @@ def append_dj_inputs(master_harbor_input_port,
         ignore(output.dummy(master_dj, fallible=true))
         ignore(output.dummy(dj_live, fallible=true))
 
-        switch(id="master_dj_switch", 
-            track_sensitive=false, 
-            transitions=[transition, transition, transition, transition], 
-            [({!master_dj_enabled},master_dj), 
-            ({!hp_scheduled_play_enabled}, s), 
-            ({!live_dj_enabled},dj_live), 
-            ({!scheduled_play_enabled}, s)])
+        ([transition, transition, transition, transition],
+            [
+                ({!master_dj_enabled},master_dj), 
+                ({!hp_scheduled_play_enabled}, s), 
+                ({!live_dj_enabled},dj_live), 
+                ({true}, s),
+            ])
 
     elsif master_harbor_input_port != 0 and master_harbor_input_mount_point != "" then
         master_dj = mksafe(
@@ -259,10 +259,11 @@ def append_dj_inputs(master_harbor_input_port,
 
         ignore(output.dummy(master_dj, fallible=true))
         
-        switch(id="master_dj_switch", 
-            track_sensitive=false, 
-            transitions=[transition, transition], 
-            [({!master_dj_enabled},master_dj), ({!scheduled_play_enabled}, s)])
+        ([transition, transition], 
+            [
+                ({!master_dj_enabled},master_dj),
+                ({true}, s), 
+            ])
 
     elsif dj_harbor_input_port != 0 and dj_harbor_input_mount_point != "" then
         dj_live = mksafe(
@@ -277,28 +278,34 @@ def append_dj_inputs(master_harbor_input_port,
 
         ignore(output.dummy(dj_live, fallible=true))
 
-        switch(id="live_dj_switch", 
-            track_sensitive=false, 
-            transitions=[transition, transition, transition], 
+        ([transition, transition, transition],
             [
                 ({!hp_scheduled_play_enabled}, s), 
-                ({!live_dj_enabled},dj_live),
-                ({!scheduled_play_enabled}, s)])
+                ({!live_dj_enabled},dj_live), 
+                ({true}, s),
+            ])
     else
-        s
+        ([transition], [
+                ({true}, s),
+            ])
     end
 end
 
-s = append_dj_inputs(master_live_stream_port, master_live_stream_mp,
-    dj_live_stream_port, dj_live_stream_mp, stream_queue)
-
-s = fallback(id="default_fallback", 
+s = switch(id="default_switch", 
     track_sensitive=false,
     transitions=[transition_default, transition],
-    [s, default])
+    [({!scheduled_play_enabled}, stream_queue), ({true}, default)])
+
+pair = append_dj_inputs(master_live_stream_port, master_live_stream_mp,
+    dj_live_stream_port, dj_live_stream_mp, s)
+
+s = switch(id="master_switch", 
+    track_sensitive=false, 
+    transitions=fst(pair), 
+    snd(pair)
+)
 
 # Attach a skip command to the source s:
-
 add_skip_command(s)
 
 server.register(namespace="streams",
