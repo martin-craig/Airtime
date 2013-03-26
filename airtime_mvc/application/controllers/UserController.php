@@ -131,8 +131,7 @@ class UserController extends Zend_Controller_Action
         if ($request->isPost()) {
             $formData = $request->getPost();
             
-            if (isset($CC_CONFIG['demo']) && $CC_CONFIG['demo'] == 1
-                    && $formData['cu_login'] == 'admin') {
+            if ($formData['cu_login'] == 'admin') {
                 $this->view->form = $form;
                 $this->view->successMessage = "<div class='errors'>"._("Specific action is not allowed in demo version!")."</div>";
                 die(json_encode(array("html"=>$this->view->render('user/edit-user.phtml'))));
@@ -198,9 +197,8 @@ class UserController extends Zend_Controller_Action
 
         $user = new Application_Model_User($delId);
 
-        if (isset($CC_CONFIG['demo']) && $CC_CONFIG['demo'] == 1
-            && $user->getLogin() == 'admin') {
-                return;
+        if ($user->getLogin() == 'admin') {
+            return;
         }
 
         # Take care of the user's files by either assigning them to somebody
