@@ -85,6 +85,17 @@ class Application_Form_AddShowWhen extends Zend_Form_SubForm
             'decorators'  => array('ViewHelper')
         ));
 
+        // Add repeats element
+        $this->addElement('select', 'add_show_source_type', array(
+            'label'      => _('Priority'),
+            'required'   => false,
+            'decorators'  => array('ViewHelper'),
+            'multiOptions' => array(
+                "0" => _("Normal"),
+                "1" => _("High Priority"),
+            )
+        ));
+
     }
 
     public function checkReliantFields($formData, $validateStartDate, $originalStartDate=null, $update=false, $instanceId=null)
