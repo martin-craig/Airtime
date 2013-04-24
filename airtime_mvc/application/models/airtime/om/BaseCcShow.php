@@ -96,6 +96,13 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 	protected $live_stream_pass;
 
 	/**
+	 * The value for the priority field.
+	 * Note: this column has a database default value of: 0
+	 * @var        int
+	 */
+	protected $priority;
+
+	/**
 	 * @var        array CcShowInstances[] Collection to store aggregation of CcShowInstances objects.
 	 */
 	protected $collCcShowInstancess;
@@ -142,6 +149,7 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 		$this->genre = '';
 		$this->live_stream_using_airtime_auth = false;
 		$this->live_stream_using_custom_auth = false;
+		$this->priority = 0;
 	}
 
 	/**
@@ -262,6 +270,16 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 	public function getDbLiveStreamPass()
 	{
 		return $this->live_stream_pass;
+	}
+
+	/**
+	 * Get the [priority] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getDbPriority()
+	{
+		return $this->priority;
 	}
 
 	/**
@@ -485,6 +503,26 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 	} // setDbLiveStreamPass()
 
 	/**
+	 * Set the value of [priority] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     CcShow The current object (for fluent API support)
+	 */
+	public function setDbPriority($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->priority !== $v || $this->isNew()) {
+			$this->priority = $v;
+			$this->modifiedColumns[] = CcShowPeer::PRIORITY;
+		}
+
+		return $this;
+	} // setDbPriority()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -511,6 +549,10 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 			}
 
 			if ($this->live_stream_using_custom_auth !== false) {
+				return false;
+			}
+
+			if ($this->priority !== 0) {
 				return false;
 			}
 
@@ -547,6 +589,7 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 			$this->live_stream_using_custom_auth = ($row[$startcol + 8] !== null) ? (boolean) $row[$startcol + 8] : null;
 			$this->live_stream_user = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
 			$this->live_stream_pass = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->priority = ($row[$startcol + 11] !== null) ? (int) $row[$startcol + 11] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -555,7 +598,7 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 11; // 11 = CcShowPeer::NUM_COLUMNS - CcShowPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 12; // 12 = CcShowPeer::NUM_COLUMNS - CcShowPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating CcShow object", $e);
@@ -959,6 +1002,9 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 			case 10:
 				return $this->getDbLiveStreamPass();
 				break;
+			case 11:
+				return $this->getDbPriority();
+				break;
 			default:
 				return null;
 				break;
@@ -993,6 +1039,7 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 			$keys[8] => $this->getDbLiveStreamUsingCustomAuth(),
 			$keys[9] => $this->getDbLiveStreamUser(),
 			$keys[10] => $this->getDbLiveStreamPass(),
+			$keys[11] => $this->getDbPriority(),
 		);
 		return $result;
 	}
@@ -1057,6 +1104,9 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 			case 10:
 				$this->setDbLiveStreamPass($value);
 				break;
+			case 11:
+				$this->setDbPriority($value);
+				break;
 		} // switch()
 	}
 
@@ -1092,6 +1142,7 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 		if (array_key_exists($keys[8], $arr)) $this->setDbLiveStreamUsingCustomAuth($arr[$keys[8]]);
 		if (array_key_exists($keys[9], $arr)) $this->setDbLiveStreamUser($arr[$keys[9]]);
 		if (array_key_exists($keys[10], $arr)) $this->setDbLiveStreamPass($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setDbPriority($arr[$keys[11]]);
 	}
 
 	/**
@@ -1114,6 +1165,7 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 		if ($this->isColumnModified(CcShowPeer::LIVE_STREAM_USING_CUSTOM_AUTH)) $criteria->add(CcShowPeer::LIVE_STREAM_USING_CUSTOM_AUTH, $this->live_stream_using_custom_auth);
 		if ($this->isColumnModified(CcShowPeer::LIVE_STREAM_USER)) $criteria->add(CcShowPeer::LIVE_STREAM_USER, $this->live_stream_user);
 		if ($this->isColumnModified(CcShowPeer::LIVE_STREAM_PASS)) $criteria->add(CcShowPeer::LIVE_STREAM_PASS, $this->live_stream_pass);
+		if ($this->isColumnModified(CcShowPeer::PRIORITY)) $criteria->add(CcShowPeer::PRIORITY, $this->priority);
 
 		return $criteria;
 	}
@@ -1185,6 +1237,7 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 		$copyObj->setDbLiveStreamUsingCustomAuth($this->live_stream_using_custom_auth);
 		$copyObj->setDbLiveStreamUser($this->live_stream_user);
 		$copyObj->setDbLiveStreamPass($this->live_stream_pass);
+		$copyObj->setDbPriority($this->priority);
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
@@ -1787,6 +1840,7 @@ abstract class BaseCcShow extends BaseObject  implements Persistent
 		$this->live_stream_using_custom_auth = null;
 		$this->live_stream_user = null;
 		$this->live_stream_pass = null;
+		$this->priority = null;
 		$this->alreadyInSave = false;
 		$this->alreadyInValidation = false;
 		$this->clearAllReferences();

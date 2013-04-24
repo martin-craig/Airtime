@@ -17,6 +17,7 @@
  * @method     CcShowQuery orderByDbLiveStreamUsingCustomAuth($order = Criteria::ASC) Order by the live_stream_using_custom_auth column
  * @method     CcShowQuery orderByDbLiveStreamUser($order = Criteria::ASC) Order by the live_stream_user column
  * @method     CcShowQuery orderByDbLiveStreamPass($order = Criteria::ASC) Order by the live_stream_pass column
+ * @method     CcShowQuery orderByDbPriority($order = Criteria::ASC) Order by the priority column
  *
  * @method     CcShowQuery groupByDbId() Group by the id column
  * @method     CcShowQuery groupByDbName() Group by the name column
@@ -29,6 +30,7 @@
  * @method     CcShowQuery groupByDbLiveStreamUsingCustomAuth() Group by the live_stream_using_custom_auth column
  * @method     CcShowQuery groupByDbLiveStreamUser() Group by the live_stream_user column
  * @method     CcShowQuery groupByDbLiveStreamPass() Group by the live_stream_pass column
+ * @method     CcShowQuery groupByDbPriority() Group by the priority column
  *
  * @method     CcShowQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     CcShowQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -64,6 +66,7 @@
  * @method     CcShow findOneByDbLiveStreamUsingCustomAuth(boolean $live_stream_using_custom_auth) Return the first CcShow filtered by the live_stream_using_custom_auth column
  * @method     CcShow findOneByDbLiveStreamUser(string $live_stream_user) Return the first CcShow filtered by the live_stream_user column
  * @method     CcShow findOneByDbLiveStreamPass(string $live_stream_pass) Return the first CcShow filtered by the live_stream_pass column
+ * @method     CcShow findOneByDbPriority(int $priority) Return the first CcShow filtered by the priority column
  *
  * @method     array findByDbId(int $id) Return CcShow objects filtered by the id column
  * @method     array findByDbName(string $name) Return CcShow objects filtered by the name column
@@ -76,6 +79,7 @@
  * @method     array findByDbLiveStreamUsingCustomAuth(boolean $live_stream_using_custom_auth) Return CcShow objects filtered by the live_stream_using_custom_auth column
  * @method     array findByDbLiveStreamUser(string $live_stream_user) Return CcShow objects filtered by the live_stream_user column
  * @method     array findByDbLiveStreamPass(string $live_stream_pass) Return CcShow objects filtered by the live_stream_pass column
+ * @method     array findByDbPriority(int $priority) Return CcShow objects filtered by the priority column
  *
  * @package    propel.generator.airtime.om
  */
@@ -410,6 +414,37 @@ abstract class BaseCcShowQuery extends ModelCriteria
 			}
 		}
 		return $this->addUsingAlias(CcShowPeer::LIVE_STREAM_PASS, $dbLiveStreamPass, $comparison);
+	}
+
+	/**
+	 * Filter the query on the priority column
+	 * 
+	 * @param     int|array $dbPriority The value to use as filter.
+	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    CcShowQuery The current query, for fluid interface
+	 */
+	public function filterByDbPriority($dbPriority = null, $comparison = null)
+	{
+		if (is_array($dbPriority)) {
+			$useMinMax = false;
+			if (isset($dbPriority['min'])) {
+				$this->addUsingAlias(CcShowPeer::PRIORITY, $dbPriority['min'], Criteria::GREATER_EQUAL);
+				$useMinMax = true;
+			}
+			if (isset($dbPriority['max'])) {
+				$this->addUsingAlias(CcShowPeer::PRIORITY, $dbPriority['max'], Criteria::LESS_EQUAL);
+				$useMinMax = true;
+			}
+			if ($useMinMax) {
+				return $this;
+			}
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
+		}
+		return $this->addUsingAlias(CcShowPeer::PRIORITY, $dbPriority, $comparison);
 	}
 
 	/**

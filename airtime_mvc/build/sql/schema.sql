@@ -154,6 +154,7 @@ CREATE TABLE "cc_show"
 	"live_stream_using_custom_auth" BOOLEAN default 'f',
 	"live_stream_user" VARCHAR(255),
 	"live_stream_pass" VARCHAR(255),
+	"priority" INT2 default 0 NOT NULL,
 	PRIMARY KEY ("id")
 );
 

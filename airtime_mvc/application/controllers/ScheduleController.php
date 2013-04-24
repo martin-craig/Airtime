@@ -849,6 +849,9 @@ class ScheduleController extends Zend_Controller_Action
             $data['add_show_day_check'] = null;
         }
 
+        //TODO
+        $data['add_show_priority'] = '0';
+
         $validateStartDate = true;
         $success = Application_Model_Schedule::addUpdateShow($data, $this,
             $validateStartDate);

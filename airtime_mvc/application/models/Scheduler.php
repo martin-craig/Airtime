@@ -546,8 +546,28 @@ class Application_Model_Scheduler
     }
 
     /*
-     * @param array $scheduleItems
-     * @param array $mediaItems
+     * @param array $scheduleItems - a list of associative arrays
+         Array
+            (
+                [0] => Array
+                    (
+                        [id] => 3 (cc_schedule key)
+                        [instance] => 1 (instance id)
+                        [timestamp] => 1366767632
+                    )
+
+            )
+     * @param array $mediaItems - a list of associate arrays
+            2013-04-23T21:40:56-04:00 INFO (6): [Scheduler.php : scheduleAfter() : line 559] - Array
+            (
+                [0] => Array
+                    (
+                        [id] => 2 (cc_file id)
+                        [type] => audioclip
+                    )
+
+            )
+     *
      */
     public function scheduleAfter($scheduleItems, $mediaItems, $adjustSched = true)
     {

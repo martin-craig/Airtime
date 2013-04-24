@@ -1136,6 +1136,7 @@ SQL;
         $ccShow->setDbLiveStreamUsingCustomAuth($data['cb_custom_auth'] == 1);
         $ccShow->setDbLiveStreamUser($data['custom_username']);
         $ccShow->setDbLiveStreamPass($data['custom_password']);
+        $ccShow->setDbPriority($data['add_show_priority']);
         $ccShow->save();
 
         $showId = $ccShow->getDbId();

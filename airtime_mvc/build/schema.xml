@@ -130,6 +130,7 @@
 	<column name="live_stream_using_custom_auth" phpName="DbLiveStreamUsingCustomAuth" type="BOOLEAN" required="false" defaultValue="false"/>
 	<column name="live_stream_user" phpName="DbLiveStreamUser" type="VARCHAR" size="255" required="false"/>
 	<column name="live_stream_pass" phpName="DbLiveStreamPass" type="VARCHAR" size="255" required="false"/>
+	<column name="priority" phpName="DbPriority" type="SMALLINT" required="true" defaultValue="0"/>
   </table>
   <table name="cc_show_instances" phpName="CcShowInstances">
     <column name="id" phpName="DbId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
