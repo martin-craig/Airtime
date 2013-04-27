@@ -48,10 +48,11 @@ def is_file(media_item):
     return media_item['type'] == 'file'
 
 class PypoPush(Thread):
-    def __init__(self, q, telnet_lock):
+    def __init__(self, q, telnet_lock, priority):
         Thread.__init__(self)
         self.api_client = api_client.AirtimeApiClient()
         self.queue = q
+        self.priority = priority
 
         self.telnet_lock = telnet_lock
 
@@ -167,7 +168,7 @@ class PypoPush(Thread):
             self.telnet_lock.acquire()
             tn = telnetlib.Telnet(LS_HOST, LS_PORT)
 
-            msg = 'queue.queue\n'
+            msg = 'queue%s.queue\n' % self.priority
             tn.write(msg)
             response = tn.read_until("\r\n").strip(" \r\n")
             tn.write('exit\n')
@@ -270,7 +271,8 @@ class PypoPush(Thread):
                 #Items that are in Liquidsoap's queue aren't scheduled anymore. We need to connect
                 #and remove these items.
                 self.logger.debug("Change in link %s of current chain", problem_at_iteration)
-                self.remove_from_liquidsoap_queue(problem_at_iteration, liquidsoap_queue_approx[problem_at_iteration:])
+                self.remove_from_liquidsoap_queue(problem_at_iteration, 
+                        liquidsoap_queue_approx[problem_at_iteration:])
 
             if problem_at_iteration is None and len(file_chain) > len(liquidsoap_queue_approx):
                 self.logger.debug("New schedule has longer current chain.")
@@ -641,7 +643,7 @@ class PypoPush(Thread):
                 queue_copy = liquidsoap_queue_approx[::-1]
 
                 for queue_item in queue_copy:
-                    msg = "queue.remove %s\n" % queue_item['queue_id']
+                    msg = "queue%s.remove %s\n" % (self.priority, queue_item['queue_id'])
                     self.logger.debug(msg)
                     tn.write(msg)
                     response = tn.read_until("\r\n").strip("\r\n")
@@ -655,7 +657,7 @@ class PypoPush(Thread):
                         self.logger.debug(msg)
                         tn.write(msg)
 
-            msg = "queue.queue\n"
+            msg = "queue%s.queue\n" % self.priority
             self.logger.debug(msg)
             tn.write(msg)
 
@@ -694,9 +696,9 @@ class PypoPush(Thread):
 
     def telnet_to_liquidsoap(self, media_item):
         """
-        telnets to liquidsoap and pushes the media_item to its queue. Push the
-        show name of every media_item as well, just to keep Liquidsoap up-to-date
-        about which show is playing.
+    telnets to liquidsoap and pushes the media_item to its queue. Push the
+    show name of every media_item as well, just to keep Liquidsoap up-to-date
+    about which show is playing.
         """
         try:
             self.telnet_lock.acquire()
@@ -705,7 +707,7 @@ class PypoPush(Thread):
             #tn.write(("vars.pypo_data %s\n"%liquidsoap_data["schedule_id"]).encode('utf-8'))
 
             annotation = self.create_liquidsoap_annotation(media_item)
-            msg = 'queue.push %s\n' % annotation.encode('utf-8')
+            msg = 'queue%s.push %s\n' % (self.priority, annotation.encode('utf-8'))
             self.logger.debug(msg)
             tn.write(msg)
             queue_id = tn.read_until("\r\n").strip("\r\n")

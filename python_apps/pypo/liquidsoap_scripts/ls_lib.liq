@@ -536,6 +536,7 @@ def http_fallback(~http_input_id,~http,~default)
   end
 
   switch(
+    id='web_stream_switch',
     track_sensitive=false,
     transitions=[to_live,to_static],
     [(# make sure it is connected, and not buffering

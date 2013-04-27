@@ -192,7 +192,8 @@ if __name__ == '__main__':
 
     pypoFetch_q = Queue()
     recorder_q = Queue()
-    pypoPush_q = Queue()
+    pypoPush_q0 = Queue()
+    pypoPush_q1 = Queue()
 
 
 
@@ -212,11 +213,15 @@ if __name__ == '__main__':
     pfile.daemon = True
     pfile.start()
 
-    pf = PypoFetch(pypoFetch_q, pypoPush_q, media_q, telnet_lock)
+    pf = PypoFetch(pypoFetch_q, pypoPush_q0, pypoPush_q1, media_q, telnet_lock)
     pf.daemon = True
     pf.start()
 
-    pp = PypoPush(pypoPush_q, telnet_lock)
+    pp = PypoPush(pypoPush_q0, telnet_lock, 0)
+    pp.daemon = True
+    pp.start()
+
+    pp = PypoPush(pypoPush_q1, telnet_lock, 1)
     pp.daemon = True
     pp.start()
 

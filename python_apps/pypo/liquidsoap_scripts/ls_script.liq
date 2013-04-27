@@ -34,8 +34,15 @@ just_switched = ref false
 
 %include "ls_lib.liq"
 
-queue = audio_to_stereo(id="queue_src", request.equeue(id="queue", length=0.5))
-queue = cue_cut(queue)
+queue0 = audio_to_stereo(id="queue0_src", request.equeue(id="queue0", length=0.5))
+queue0 = cue_cut(queue0)
+output.dummy(fallible=true, queue0)
+
+queue1 = audio_to_stereo(id="queue1_src", request.equeue(id="queue1", length=0.5))
+queue1 = cue_cut(queue1)
+output.dummy(fallible=true, queue1)
+
+queue = fallback(track_sensitive=false, [queue1, queue0, blank()])
 queue = amplify(1., override="replay_gain", queue)
 
 # the crossfade function controls fade in/out

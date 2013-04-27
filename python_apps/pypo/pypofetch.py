@@ -42,11 +42,12 @@ except Exception, e:
     sys.exit()
 
 class PypoFetch(Thread):
-    def __init__(self, pypoFetch_q, pypoPush_q, media_q, telnet_lock):
+    def __init__(self, pypoFetch_q, pypoPush_q0, pypoPush_q1, media_q, telnet_lock):
         Thread.__init__(self)
         self.api_client = api_client.AirtimeApiClient()
         self.fetch_queue = pypoFetch_q
-        self.push_queue = pypoPush_q
+        self.push_queue0 = pypoPush_q0
+        self.push_queue1 = pypoPush_q1
         self.media_prepare_queue = media_q
         self.last_update_schedule_timestamp = time.time()
         self.listener_timeout = POLL_INTERVAL
@@ -469,7 +470,7 @@ class PypoFetch(Thread):
         media = schedule_data["media"]
         media_filtered = {}
 
-        # Download all the media and put playlists in liquidsoap "annotate" format
+        # Download all the media and put playlists in Liquidsoap "annotate" format
         try:
 
             """
@@ -495,8 +496,17 @@ class PypoFetch(Thread):
 
         # Send the data to pypo-push
         self.logger.debug("Pushing to pypo-push")
-        self.push_queue.put(media)
 
+        priority0 = {}
+        priority1 = {}
+        for key in media:
+            media_item = media[key]
+            if "priority" in media_item and media_item['priority'] == 1:
+                priority1[key] = media_item
+            else:
+                priority0[key] = media_item
+        self.push_queue0.put(priority0)
+        self.push_queue1.put(priority1)
 
         # cleanup
         try: self.cache_cleanup(media)
