@@ -621,6 +621,7 @@ class ScheduleController extends Zend_Controller_Action
                                   'add_show_end_date_no_repeat' => $endsDateTime->format("Y-m-d"),
                                   'add_show_end_time'    => $endsDateTime->format("H:i"),
                                   'add_show_duration' => $show->getDuration(true),
+                                  'add_show_priority' => $show->getPriority(),
                                   'add_show_repeats' => $show->isRepeating() ? 1 : 0));
 
         if ($show->isStartDateTimeInPast()) {
@@ -848,9 +849,6 @@ class ScheduleController extends Zend_Controller_Action
         if ($data['add_show_day_check'] == "") {
             $data['add_show_day_check'] = null;
         }
-
-        //TODO
-        $data['add_show_priority'] = '0';
 
         $validateStartDate = true;
         $success = Application_Model_Schedule::addUpdateShow($data, $this,

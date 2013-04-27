@@ -1198,16 +1198,20 @@ SQL;
     }
 
     public static function checkOverlappingShows($show_start, $show_end,
-        $update=false, $instanceId=null, $showId=null)
+        $update=false, $instanceId=null, $showId=null, $priority = "0")
     {
         $overlapping = false;
         
         $params = array(
             ':show_end1'  => $show_end->format('Y-m-d H:i:s'),
             ':show_end2'  => $show_end->format('Y-m-d H:i:s'),
-            ':show_end3'  => $show_end->format('Y-m-d H:i:s')
+            ':show_end3'  => $show_end->format('Y-m-d H:i:s'),
+            ':priority'   => $priority
         );
         
+        if ($update && is_null($instanceId) && is_null($showId)) {
+            throw new Exception("Invalid combination of parameters");
+        }
         
         /* If a show is being edited, exclude it from the query
          * In both cases (new and edit) we only grab shows that
@@ -1215,46 +1219,56 @@ SQL;
          */
         if ($update) {
             $sql = <<<SQL
-SELECT id,
-       starts,
-       ends
-FROM cc_show_instances
+SELECT si.id,
+       si.starts,
+       si.ends,
+       s.priority
+FROM cc_show_instances as s
+LEFT JOIN cc_show as s on
+s.id = si.show_id
 WHERE (ends <= :show_end1
        OR starts <= :show_end2)
   AND date(starts) >= (date(:show_end3) - INTERVAL '2 days')
   AND modified_instance = FALSE
+  AND priority = :priority
 SQL;
-        if (is_null($showId)) {
-            $sql .= <<<SQL
+            if (is_null($showId)) {
+                $sql .= <<<SQL
   AND id != :instanceId
 ORDER BY ends
 SQL;
-            $params[':instanceId'] = $instanceId;
-        } else {
-            $sql .= <<<SQL
+                $params[':instanceId'] = $instanceId;
+            } else {
+                $sql .= <<<SQL
   AND show_id != :showId
 ORDER BY ends
 SQL;
-            $params[':showId'] = $showId;
-        }
+                $params[':showId'] = $showId;
+            }
             $rows = Application_Common_Database::prepareAndExecute($sql, $params, 'all');
         } else {
             $sql = <<<SQL
-SELECT id,
-       starts,
-       ends
-FROM cc_show_instances
+SELECT si.id,
+       si.starts,
+       si.ends,
+       s.priority
+FROM cc_show_instances as si
+LEFT JOIN cc_show as s on
+s.id = si.show_id
 WHERE (ends <= :show_end1
        OR starts <= :show_end2)
   AND date(starts) >= (date(:show_end3) - INTERVAL '2 days')
   AND modified_instance = FALSE
+  AND priority = :priority
 ORDER BY ends
 SQL;
 
             $rows = Application_Common_Database::prepareAndExecute($sql, array(
                 ':show_end1' => $show_end->format('Y-m-d H:i:s'),
                 ':show_end2' => $show_end->format('Y-m-d H:i:s'),
-                ':show_end3' => $show_end->format('Y-m-d H:i:s')), 'all');
+                ':show_end3' => $show_end->format('Y-m-d H:i:s'),
+                ':priority'  => $priority
+            ), 'all');
         }
 
         foreach ($rows as $row) {

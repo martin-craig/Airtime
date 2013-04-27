@@ -86,7 +86,7 @@ class Application_Form_AddShowWhen extends Zend_Form_SubForm
         ));
 
         // Add repeats element
-        $this->addElement('select', 'add_show_source_type', array(
+        $this->addElement('select', 'add_show_priority', array(
             'label'      => _('Priority'),
             'required'   => false,
             'decorators'  => array('ViewHelper'),
@@ -198,12 +198,21 @@ class Application_Form_AddShowWhen extends Zend_Form_SubForm
                  */
                 if ($update) {
                     $overlapping = Application_Model_Schedule::checkOverlappingShows(
-                                    $show_start, $show_end, $update, null, $formData["add_show_id"]);
+                        $show_start, 
+                        $show_end, 
+                        $update, 
+                        null, 
+                        $formData["add_show_id"], 
+                        $formData["add_show_priority"]);
                 } else {
                     $overlapping = Application_Model_Schedule::checkOverlappingShows(
-                                    $show_start, $show_end);
+                        $show_start, 
+                        $show_end,
+                        false,
+                        null,
+                        null,
+                        $formData["add_show_priority"]);
                 }
-                //$overlapping = Application_Model_Schedule::checkOverlappingShows($show_start, $show_end, $update, $instanceId);
 
                 /* Check if repeats overlap with previously scheduled shows
                  * Do this for each show day
@@ -241,7 +250,12 @@ class Application_Form_AddShowWhen extends Zend_Form_SubForm
                             if ($formData['add_show_id'] == -1) {
                                 //this is a new show
                                 $overlapping = Application_Model_Schedule::checkOverlappingShows(
-                                    $repeatShowStart, $repeatShowEnd);
+                                    $repeatShowStart,
+                                    $repeatShowEnd,
+                                    false,
+                                    null,
+                                    null,
+                                    $formData["add_show_priority"]);
                                 
                                 /* If the repeating show is rebroadcasted we need to check
                                  * the rebroadcast dates relative to the repeating show
@@ -252,7 +266,12 @@ class Application_Form_AddShowWhen extends Zend_Form_SubForm
                                 }
                             } else {
                                 $overlapping = Application_Model_Schedule::checkOverlappingShows(
-                                    $repeatShowStart, $repeatShowEnd, $update, null, $formData["add_show_id"]);
+                                    $repeatShowStart, 
+                                    $repeatShowEnd, 
+                                    $update, 
+                                    null, 
+                                    $formData["add_show_id"], 
+                                    $formData["add_show_priority"]);
                                     
                                 if (!$overlapping && $formData['add_show_rebroadcast']) {
                                     $overlapping = self::checkRebroadcastDates(
@@ -282,7 +301,13 @@ class Application_Form_AddShowWhen extends Zend_Form_SubForm
                 /* Check first show
                  * Continue if the first show does not overlap
                  */
-                $overlapping = Application_Model_Schedule::checkOverlappingShows($show_start, $show_end, $update, $instanceId);
+                $overlapping = Application_Model_Schedule::checkOverlappingShows(
+                    $show_start,
+                    $show_end,
+                    $update,
+                    $instanceId,
+                    null,
+                    $formData["add_show_priority"]);
 
                 if (!$overlapping) {
                     $durationToAdd = "PT".$hours."H".$minutes."M";
@@ -296,7 +321,13 @@ class Application_Form_AddShowWhen extends Zend_Form_SubForm
                         $rebroadcastShowStart->setTimezone(new DateTimeZone('UTC'));
                         $rebroadcastShowEnd = clone $rebroadcastShowStart;
                         $rebroadcastShowEnd->add(new DateInterval($durationToAdd));
-                        $overlapping = Application_Model_Schedule::checkOverlappingShows($rebroadcastShowStart, $rebroadcastShowEnd, $update, $instanceId);
+                        $overlapping = Application_Model_Schedule::checkOverlappingShows(
+                            $rebroadcastShowStart,
+                            $rebroadcastShowEnd,
+                            $update,
+                            $instanceId,
+                            null,
+                            $formData["add_show_priority"]);
                         if ($overlapping) {
                             $valid = false;
                             $this->getElement('add_show_duration')->setErrors(array(_('Cannot schedule overlapping shows')));
@@ -308,7 +339,13 @@ class Application_Form_AddShowWhen extends Zend_Form_SubForm
                     $this->getElement('add_show_duration')->setErrors(array(_('Cannot schedule overlapping shows')));
                 }
             } else {
-              $overlapping = Application_Model_Schedule::checkOverlappingShows($show_start, $show_end, $update, $instanceId);
+                $overlapping = Application_Model_Schedule::checkOverlappingShows(
+                    $show_start,
+                    $show_end,
+                    $update,
+                    $instanceId,
+                    null,
+                    $formData["add_show_priority"]);
                 if ($overlapping) {
                     $this->getElement('add_show_duration')->setErrors(array(_('Cannot schedule overlapping shows')));
                     $valid = false;
@@ -340,10 +377,20 @@ class Application_Form_AddShowWhen extends Zend_Form_SubForm
             
             if ($showEdit) {
                 $overlapping = Application_Model_Schedule::checkOverlappingShows(
-                    $rebroadcastShowStart, $rebroadcastShowEnd, true, null, $formData['add_show_id']);
+                    $rebroadcastShowStart,
+                    $rebroadcastShowEnd,
+                    true,
+                    null,
+                    $formData['add_show_id'],
+                    $formData["add_show_priority"]);
             } else {
                 $overlapping = Application_Model_Schedule::checkOverlappingShows(
-                    $rebroadcastShowStart, $rebroadcastShowEnd);
+                    $rebroadcastShowStart,
+                    $rebroadcastShowEnd,
+                    false,
+                    null,
+                    null,
+                    $formData["add_show_priority"]);
             }
             
             if ($overlapping) break;

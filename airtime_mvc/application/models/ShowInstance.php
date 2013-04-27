@@ -271,7 +271,13 @@ SQL;
         }
 
         //check if show is overlapping
-        $overlapping = Application_Model_Schedule::checkOverlappingShows($newStartsDateTime, $newEndsDateTime, true, $this->getShowInstanceId());
+        $overlapping = Application_Model_Schedule::checkOverlappingShows(
+            $newStartsDateTime, 
+            $newEndsDateTime, 
+            true, 
+            $this->getShowInstanceId(),
+            null,
+            $this->getShow()->getPriority());
         if ($overlapping) {
             return _("Cannot schedule overlapping shows");
         }

@@ -216,7 +216,12 @@ SQL;
             $newEndsDateTime->setTimezone($utc);
 
             $overlapping = Application_Model_Schedule::checkOverlappingShows(
-                $newStartsDateTime, $newEndsDateTime, true, $si->getDbId());
+                $newStartsDateTime, 
+                $newEndsDateTime, 
+                true, 
+                $si->getDbId(), 
+                null,
+                $this->getPriority());
 
             if ($overlapping) {
                 return _("Cannot schedule overlapping shows.\nNote: Resizing a repeating show ".
@@ -896,6 +901,12 @@ SQL;
 
             return str_pad(intval($info[0]),2,'0',STR_PAD_LEFT).'h '.str_pad(intval($info[1]),2,'0',STR_PAD_LEFT).'m';
         }
+    }
+
+    public function getPriority()
+    {
+        $show = CcShowQuery::create()->findPK($this->_showId);
+        return $show->getDbPriority();
     }
 
     public function getShowDays()
