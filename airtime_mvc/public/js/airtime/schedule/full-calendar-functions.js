@@ -395,43 +395,46 @@ function getCurrentShow(){
         $el;
     $.post(url, {format: "json"}, function(json) {
         if (json.current_show === true) {
-            $el = $("div[class*=fc-event-time][id="+json.si_id+"]");
-            if (view_name === 'agendaDay' || view_name === 'agendaWeek') {
+            for (var k in json.si_id) {
+                id = json.si_id[k];
+                $el = $("div[class*=fc-event-time][id="+id+"]");
+                if (view_name === 'agendaDay' || view_name === 'agendaWeek') {
 
-                /* Need to remove now-playing class because if user
-                 * is switching from week view to day view (and vice versa)
-                 * the icon may already be there from previous view
-                 */ 
-                $el.siblings().remove("span[class=small-icon now-playing]");
-                if (!$el.siblings().hasClass("small-icon now-playing")) {
-                    if ($el.siblings().hasClass("small-icon recording")) {
+                    /* Need to remove now-playing class because if user
+                     * is switching from week view to day view (and vice versa)
+                     * the icon may already be there from previous view
+                     */ 
+                    $el.siblings().remove("span[class=small-icon now-playing]");
+                    if (!$el.siblings().hasClass("small-icon now-playing")) {
+                        if ($el.siblings().hasClass("small-icon recording")) {
 
-                        /* Without removing recording icon, the now playing
-                         * icon will overwrite it.
-                         */  
-                        $el.siblings().remove("span[class=small-icon recording]");
-                        $el.before('<span id="'+json.si_id+'" class="small-icon now-playing"></span><span id="'+json.si_id+'" class="small-icon recording"></span>');
-                    } else if ($el.siblings().hasClass("small-icon rebroadcast")) {
+                            /* Without removing recording icon, the now playing
+                             * icon will overwrite it.
+                             */  
+                            $el.siblings().remove("span[class=small-icon recording]");
+                            $el.before('<span id="'+id+'" class="small-icon now-playing"></span><span id="'+id+'" class="small-icon recording"></span>');
+                        } else if ($el.siblings().hasClass("small-icon rebroadcast")) {
 
-                        /* Without removing rebroadcast icon, the now playing
-                         * icon will overwrite it.
-                         */ 
-                        $el.siblings().remove("span[class=small-icon rebroadcast]");
-                        $el.before('<span id="'+json.si_id+'" class="small-icon now-playing"></span><span id="'+json.si_id+'" class="small-icon rebroadcast"></span>');
-                    } else {
-                        $el.before('<span id="'+json.si_id+'" class="small-icon now-playing"></span>');
+                            /* Without removing rebroadcast icon, the now playing
+                             * icon will overwrite it.
+                             */ 
+                            $el.siblings().remove("span[class=small-icon rebroadcast]");
+                            $el.before('<span id="'+id+'" class="small-icon now-playing"></span><span id="'+id+'" class="small-icon rebroadcast"></span>');
+                        } else {
+                            $el.before('<span id="'+id+'" class="small-icon now-playing"></span>');
+                        }
                     }
-                }
-            } else if (view_name === 'month') {
-                if (!$("span[class*=fc-event-title][id="+json.si_id+"]").siblings().hasClass("small-icon now-playing")) {
-                    $("span[class*=fc-event-title][id="+json.si_id+"]").after('<span id="'+json.si_id+'" class="small-icon now-playing"></span>');
+                } else if (view_name === 'month') {
+                    if (!$("span[class*=fc-event-title][id="+id+"]").siblings().hasClass("small-icon now-playing")) {
+                        $("span[class*=fc-event-title][id="+id+"]").after('<span id="'+id+'" class="small-icon now-playing"></span>');
+                    }
                 }
             }
         }
         //remove icon from shows that have ended
         $(".now-playing").each(function(){
             id = $(this).attr("id");
-                if (id != json.si_id) {
+                if (!json.si_id.contains(id)) {
                     $(this).remove("span[small-icon now-playing]");	
                 }    	
             });
