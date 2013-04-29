@@ -1223,7 +1223,7 @@ SELECT si.id,
        si.starts,
        si.ends,
        s.priority
-FROM cc_show_instances as s
+FROM cc_show_instances as si
 LEFT JOIN cc_show as s on
 s.id = si.show_id
 WHERE (ends <= :show_end1
