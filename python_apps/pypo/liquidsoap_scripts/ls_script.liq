@@ -42,7 +42,8 @@ queue1 = audio_to_stereo(id="queue1_src", request.equeue(id="queue1", length=0.5
 queue1 = cue_cut(queue1)
 output.dummy(fallible=true, queue1)
 
-queue = fallback(track_sensitive=false, [queue1, queue0, blank()])
+#queue = fallback(track_sensitive=false, [queue1, queue0, blank()])
+queue = queue0
 queue = amplify(1., override="replay_gain", queue)
 
 # the crossfade function controls fade in/out
@@ -230,6 +231,12 @@ s = if dj_live_stream_port != 0 and dj_live_stream_mp != "" then
 else
     s
 end
+
+s = switch(id="queue1_switch",
+            track_sensitive=false,
+            transitions=[transition_default, transition],
+            [({!scheduled_play_enabled}, queue1), ({true}, s)]
+    )
 
 s = if master_live_stream_port != 0 and master_live_stream_mp != "" then
     master_dj = mksafe(
