@@ -36,10 +36,12 @@ just_switched = ref false
 
 queue0 = audio_to_stereo(id="queue0_src", request.equeue(id="queue0", length=0.5))
 queue0 = cue_cut(queue0)
+queue0 = on_metadata(notify, queue0)
 output.dummy(fallible=true, queue0)
 
 queue1 = audio_to_stereo(id="queue1_src", request.equeue(id="queue1", length=0.5))
 queue1 = cue_cut(queue1)
+queue1 = on_metadata(notify, queue1)
 output.dummy(fallible=true, queue1)
 
 #queue = fallback(track_sensitive=false, [queue1, queue0, blank()])
@@ -48,7 +50,6 @@ queue = amplify(1., override="replay_gain", queue)
 
 # the crossfade function controls fade in/out
 queue = crossfade_airtime(queue)
-queue = on_metadata(notify, queue)
 output.dummy(fallible=true, queue)
 
 http = input.http_restart(id="http")
