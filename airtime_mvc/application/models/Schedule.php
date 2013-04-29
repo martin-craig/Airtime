@@ -1226,22 +1226,22 @@ SELECT si.id,
 FROM cc_show_instances as si
 LEFT JOIN cc_show as s on
 s.id = si.show_id
-WHERE (ends <= :show_end1
-       OR starts <= :show_end2)
-  AND date(starts) >= (date(:show_end3) - INTERVAL '2 days')
-  AND modified_instance = FALSE
-  AND priority = :priority
+WHERE (si.ends <= :show_end1
+       OR si.starts <= :show_end2)
+  AND date(si.starts) >= (date(:show_end3) - INTERVAL '2 days')
+  AND si.modified_instance = FALSE
+  AND s.priority = :priority
 SQL;
             if (is_null($showId)) {
                 $sql .= <<<SQL
-  AND id != :instanceId
-ORDER BY ends
+  AND si.id != :instanceId
+ORDER BY si.ends
 SQL;
                 $params[':instanceId'] = $instanceId;
             } else {
                 $sql .= <<<SQL
-  AND show_id != :showId
-ORDER BY ends
+  AND si.show_id != :showId
+ORDER BY si.ends
 SQL;
                 $params[':showId'] = $showId;
             }
@@ -1255,11 +1255,11 @@ SELECT si.id,
 FROM cc_show_instances as si
 LEFT JOIN cc_show as s on
 s.id = si.show_id
-WHERE (ends <= :show_end1
-       OR starts <= :show_end2)
-  AND date(starts) >= (date(:show_end3) - INTERVAL '2 days')
-  AND modified_instance = FALSE
-  AND priority = :priority
+WHERE (si.ends <= :show_end1
+       OR si.starts <= :show_end2)
+  AND date(si.starts) >= (date(:show_end3) - INTERVAL '2 days')
+  AND si.modified_instance = FALSE
+  AND s.priority = :priority
 ORDER BY ends
 SQL;
 
