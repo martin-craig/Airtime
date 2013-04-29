@@ -1658,6 +1658,7 @@ SELECT si1.starts            AS starts,
        si1.show_id           AS show_id,
        show.name             AS name,
        show.color            AS color,
+       show.priority         AS priority,
        show.background_color AS background_color,
        si1.file_id           AS file_id,
        si1.id                AS instance_id,
@@ -1805,6 +1806,7 @@ SQL;
                 $content_count)) ? 0 : 1;
 
             $options["show_partial_filled"] = !$isFull[$show['instance_id']];
+            $options["priority"] = $show['priority'];
 
             $event = array();
 

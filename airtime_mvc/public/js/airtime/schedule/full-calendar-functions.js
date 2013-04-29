@@ -261,6 +261,12 @@ function eventRender(event, element, view) {
         }
     }
 
+    if (event.priority == 1) {
+        $(element)
+            .find(".fc-event-time")
+            .before('<span id="'+event.id+'" class="small-icon show-high-priority"></span>');
+    }
+
     if (event.record === 0 && event.rebroadcast === 0) {
         if (view.name === 'agendaDay' || view.name === 'agendaWeek') {
             if (event.show_empty === 1) {
