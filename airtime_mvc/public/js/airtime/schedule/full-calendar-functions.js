@@ -434,7 +434,7 @@ function getCurrentShow(){
         //remove icon from shows that have ended
         $(".now-playing").each(function(){
             id = $(this).attr("id");
-                if (!json.si_id.contains(id)) {
+                if (!json.si_id.indexOf(id) >= 0) {
                     $(this).remove("span[small-icon now-playing]");	
                 }    	
             });
