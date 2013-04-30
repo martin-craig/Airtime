@@ -343,7 +343,7 @@ SQL;
         if (count($p_shows) > 0) {
             $showPredicate = " AND show_id IN (".implode(",", $p_shows).")";
         } else if (count($p_show_instances) > 0) {
-            $showPredicate = " AND si_id IN (".implode(",", $p_show_instances).")";
+            $showPredicate = " AND si.id IN (".implode(",", $p_show_instances).")";
         }
 
         $sql = <<<SQL
