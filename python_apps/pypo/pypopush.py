@@ -224,7 +224,9 @@ class PypoPush(Thread):
     #clear all webstreams and files from Liquidsoap
     def clear_all_liquidsoap_items(self):
         self.remove_from_liquidsoap_queue(0, None)
-        self.stop_web_stream_all()
+        if self.priority == 0:
+            #only "normal" priority shows control webstreams
+            self.stop_web_stream_all()
 
     def handle_new_schedule(self, media_schedule, liquidsoap_queue_approx, liquidsoap_stream_id, current_event_chain):
         """
