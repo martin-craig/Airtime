@@ -149,7 +149,11 @@ class ScheduleController extends Zend_Controller_Action
     {
         $currentShow = Application_Model_Show::getCurrentShow();
         if (!empty($currentShow)) {
-            $this->view->si_id = $currentShow[0]["instance_id"];
+            $ids = array();
+            foreach ($currentShow as $s) {
+                $ids[] = $s["instance_id"];
+            }
+            $this->view->si_id = $ids;
             $this->view->current_show = true;
         } else {
             $this->view->current_show = false;

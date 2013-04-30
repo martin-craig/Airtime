@@ -46,6 +46,7 @@ function secondsTimer(){
 }
 
 function newSongStart(){
+    return;
     nextSongPrepare = true;
     if (nextSong.type == 'track') {
         currentSong = nextSong;
@@ -54,6 +55,7 @@ function newSongStart(){
 }
 
 function nextShowStart(){
+    return;
     nextShowPrepare = true;
     currentShow[0] = nextShow.shift();
 }

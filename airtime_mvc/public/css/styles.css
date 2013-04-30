@@ -2002,6 +2002,9 @@ span.errors.sp-errors{
 .small-icon.show-partial-filled {
     background:url(images/icon_alert_cal_alt2.png) no-repeat 0 0;
 }
+.small-icon.show-high-priority{
+    background:url(images/high_priority.png) no-repeat 0 0;
+}
 .medium-icon {
 	display:block;
 	width:25px;

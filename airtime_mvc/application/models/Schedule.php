@@ -255,13 +255,12 @@ SQL;
      * @return array $scheduledItems
      *
      */
-    public static function GetScheduleDetailItems($p_start, $p_end, $p_shows)
+    public static function GetScheduleDetailItems($p_start, $p_end, $p_shows, $p_show_instances)
     {
         $con = Propel::getConnection();
 
         $p_start_str = $p_start->format("Y-m-d H:i:s");
         $p_end_str = $p_end->format("Y-m-d H:i:s");
-
 
         //We need to search 24 hours before and after the show times so that that we
         //capture all of the show's contents.
@@ -343,6 +342,8 @@ SQL;
         $showPredicate = "";
         if (count($p_shows) > 0) {
             $showPredicate = " AND show_id IN (".implode(",", $p_shows).")";
+        } else if (count($p_show_instances) > 0) {
+            $showPredicate = " AND si.id IN (".implode(",", $p_show_instances).")";
         }
 
         $sql = <<<SQL
@@ -1227,25 +1228,25 @@ SELECT si.id,
        si.starts,
        si.ends,
        s.priority
-FROM cc_show_instances as s
+FROM cc_show_instances as si
 LEFT JOIN cc_show as s on
 s.id = si.show_id
-WHERE (ends <= :show_end1
-       OR starts <= :show_end2)
-  AND date(starts) >= (date(:show_end3) - INTERVAL '2 days')
-  AND modified_instance = FALSE
-  AND priority = :priority
+WHERE (si.ends <= :show_end1
+       OR si.starts <= :show_end2)
+  AND date(si.starts) >= (date(:show_end3) - INTERVAL '2 days')
+  AND si.modified_instance = FALSE
+  AND s.priority = :priority
 SQL;
             if (is_null($showId)) {
                 $sql .= <<<SQL
-  AND id != :instanceId
-ORDER BY ends
+  AND si.id != :instanceId
+ORDER BY si.ends
 SQL;
                 $params[':instanceId'] = $instanceId;
             } else {
                 $sql .= <<<SQL
-  AND show_id != :showId
-ORDER BY ends
+  AND si.show_id != :showId
+ORDER BY si.ends
 SQL;
                 $params[':showId'] = $showId;
             }
@@ -1259,11 +1260,11 @@ SELECT si.id,
 FROM cc_show_instances as si
 LEFT JOIN cc_show as s on
 s.id = si.show_id
-WHERE (ends <= :show_end1
-       OR starts <= :show_end2)
-  AND date(starts) >= (date(:show_end3) - INTERVAL '2 days')
-  AND modified_instance = FALSE
-  AND priority = :priority
+WHERE (si.ends <= :show_end1
+       OR si.starts <= :show_end2)
+  AND date(si.starts) >= (date(:show_end3) - INTERVAL '2 days')
+  AND si.modified_instance = FALSE
+  AND s.priority = :priority
 ORDER BY ends
 SQL;
 

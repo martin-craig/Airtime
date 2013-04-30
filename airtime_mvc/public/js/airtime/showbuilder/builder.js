@@ -44,7 +44,7 @@ var AIRTIME = (function(AIRTIME){
 
         //make sure we are only executing this code on the calendar view, not
         //the Now Playing view.
-        if (window.location.pathname.toLowerCase().indexOf("schedule") >= 0) {
+        if (window.location.pathname.toLowerCase().indexOf("schedule") < 0) {
             return;
         }
 
@@ -349,6 +349,7 @@ var AIRTIME = (function(AIRTIME){
         if (mod.fnServerData.hasOwnProperty("ops")) {
             aoData.push( { name: "myShows", value: mod.fnServerData.ops.myShows} );
             aoData.push( { name: "showFilter", value: mod.fnServerData.ops.showFilter} );
+            aoData.push( { name: "showInstanceFilter", value: mod.fnServerData.ops.showInstanceFilter} );
         }
         
         $.ajax({

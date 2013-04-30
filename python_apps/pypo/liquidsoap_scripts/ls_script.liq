@@ -36,21 +36,23 @@ just_switched = ref false
 
 queue0 = audio_to_stereo(id="queue0_src", request.equeue(id="queue0", length=0.5))
 queue0 = cue_cut(queue0)
+queue0 = on_metadata(notify, queue0)
 output.dummy(fallible=true, queue0)
 # Attach a skip command to the source s:
 add_skip_command(queue0, "0")
 
 queue1 = audio_to_stereo(id="queue1_src", request.equeue(id="queue1", length=0.5))
 queue1 = cue_cut(queue1)
+queue1 = on_metadata(notify, queue1)
 output.dummy(fallible=true, queue1)
 add_skip_command(queue1, "1")
 
-queue = fallback(track_sensitive=false, [queue1, queue0, blank()])
+#queue = fallback(track_sensitive=false, [queue1, queue0, blank()])
+queue = queue0
 queue = amplify(1., override="replay_gain", queue)
 
 # the crossfade function controls fade in/out
 queue = crossfade_airtime(queue)
-queue = on_metadata(notify, queue)
 output.dummy(fallible=true, queue)
 
 http = input.http_restart(id="http")
@@ -233,6 +235,12 @@ s = if dj_live_stream_port != 0 and dj_live_stream_mp != "" then
 else
     s
 end
+
+s = switch(id="queue1_switch",
+            track_sensitive=false,
+            transitions=[transition_default, transition],
+            [({!scheduled_play_enabled}, queue1), ({true}, s)]
+    )
 
 s = if master_live_stream_port != 0 and master_live_stream_mp != "" then
     master_dj = mksafe(
