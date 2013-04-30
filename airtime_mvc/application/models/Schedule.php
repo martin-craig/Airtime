@@ -722,6 +722,7 @@ SQL;
             'uri'               => $uri,
             'row_id'            => $item["id"],
             'type'              => 'stream_buffer_start',
+            'priority'          => $item["priority"],
             'independent_event' => true
         );
 
@@ -736,6 +737,7 @@ SQL;
             'end'               => $end,
             'show_name'         => $item["show_name"],
             'row_id'            => $item["id"],
+            'priority'          => $item["priority"],
             'independent_event' => true
         );
         self::appendScheduleItem($data, $start, $schedule_item);
@@ -753,6 +755,7 @@ SQL;
             'uri'               => $uri,
             'type'              => 'stream_buffer_end',
             'row_id'            => $item["id"],
+            'priority'          => $item["priority"],
             'independent_event' => true
         );
         self::appendScheduleItem($data, $stream_end, $schedule_item);
@@ -762,6 +765,7 @@ SQL;
             'end'               => $stream_end,
             'uri'               => $uri,
             'type'              => 'stream_output_end',
+            'priority'          => $item["priority"],
             'independent_event' => true
         );
         self::appendScheduleItem($data, $stream_end, $schedule_item);
