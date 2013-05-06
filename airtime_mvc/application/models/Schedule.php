@@ -373,6 +373,7 @@ WHERE si.modified_instance = FALSE
   OR (si.starts <= '{$p_start_str}'
       AND si.ends >= '{$p_end_str}'))
 ORDER BY si_starts,
+		si_id,
          sched_starts;
 SQL;
 
