@@ -425,6 +425,30 @@ function setupEventListeners() {
             at: "right center"
         },
     });
+
+    $(".stream_quality_upgrade_icon").qtip({
+    	content: {
+            text: sprintf(
+                	$.i18n._("You can upgrade or downgrade your streaming quality by logging into your %sAirtime pro account%s"), 
+                    "<a target='_blank' href='https://account.sourcefabric.com'>", 
+                    "</a>")
+        },
+        hide: {
+            delay: 500,
+            fixed: true
+        },
+        style: {
+            border: {
+                width: 0,
+                radius: 4
+            },
+            classes: "ui-tooltip-dark ui-tooltip-rounded"
+        },
+        position: {
+            my: "left bottom",
+            at: "right center"
+        },
+    });
 }
 
 function setSliderForReplayGain(){
