@@ -620,7 +620,7 @@ SQL;
     {
         $time_filled = $this->getTimeScheduled();
 
-        return Application_Common_DateHelper::playlistTimeToSeconds($time_filled);
+        return (float) Application_Common_DateHelper::playlistTimeToSeconds($time_filled);
     }
 
     public function getDurationSecs()

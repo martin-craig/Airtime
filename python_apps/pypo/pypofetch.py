@@ -60,6 +60,8 @@ class PypoFetch(Thread):
         self.logger = logging.getLogger()
 
         self.pypo_liquidsoap = pypo_liquidsoap
+        
+        self.time_format = "%Y-%m-%d-%H-%M-%S-%f"
 
         self.cache_dir = os.path.join(config["cache_dir"], "scheduler")
         self.logger.debug("Cache dir %s", self.cache_dir)
@@ -448,9 +450,9 @@ class PypoFetch(Thread):
                     media_filtered[key] = media_item
 
                 media_item['start'] = datetime.strptime(media_item['start'], 
-                        "%Y-%m-%d-%H-%M-%S")
+                        self.time_format)
                 media_item['end'] = datetime.strptime(media_item['end'], 
-                        "%Y-%m-%d-%H-%M-%S")
+                        self.time_format)
                 media_copy[key] = media_item
 
 
@@ -469,13 +471,13 @@ class PypoFetch(Thread):
     #do basic validation of file parameters. Useful for debugging
     #purposes
     def sanity_check_media_item(self, media_item):
-        start = datetime.strptime(media_item['start'], "%Y-%m-%d-%H-%M-%S")
-        end = datetime.strptime(media_item['end'], "%Y-%m-%d-%H-%M-%S")
+        start = datetime.strptime(media_item['start'], self.time_format)
+        end = datetime.strptime(media_item['end'], self.time_format)
 
         length1 = pure.date_interval_to_seconds(end - start)
         length2 = media_item['cue_out'] - media_item['cue_in']
 
-        if abs(length2 - length1) > 1:
+        if (length2 != length1):
             self.logger.error("end - start length: %s", length1)
             self.logger.error("cue_out - cue_in length: %s", length2)
             self.logger.error("Two lengths are not equal!!!")

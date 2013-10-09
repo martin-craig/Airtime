@@ -139,12 +139,12 @@ class Application_Model_StoredFile
             # Translate metadata attributes from media monitor (MDATA_KEY_*)
             # to their counterparts in constants.php (usually the column names)
             $track_length = $p_md['MDATA_KEY_DURATION'];
-            $track_length_in_sec = Application_Common_DateHelper::calculateLengthInSeconds($track_length);
+            //$track_length_in_sec = Application_Common_DateHelper::playlistTimeToSeconds($track_length);
             foreach ($p_md as $mdConst => $mdValue) {
                 if (defined($mdConst)) {
                     if ($mdConst == "MDATA_KEY_CUE_OUT") {
                         if ($mdValue == '0.0') {
-                            $mdValue = $track_length_in_sec;
+                            $mdValue = $track_length;
                         } else {
                             $this->_file->setDbSilanCheck(true)->save();
                         }
@@ -791,16 +791,14 @@ SQL;
             }
 
             if ($row['ftype'] === "audioclip") {
-
+            	
+            	$row_length = Application_Common_DateHelper::findClipLength($row["cuein"], $row["cueout"]);
+            	
                 $cuein_formatter = new LengthFormatter($row["cuein"]);
                 $row["cuein"] = $cuein_formatter->format();
 
                 $cueout_formatter = new LengthFormatter($row["cueout"]);
                 $row["cueout"] = $cueout_formatter->format();
-
-                $cuein = Application_Common_DateHelper::playlistTimeToSeconds($row["cuein"]);
-                $cueout = Application_Common_DateHelper::playlistTimeToSeconds($row["cueout"]);
-                $row_length = Application_Common_DateHelper::secondsToPlaylistTime($cueout - $cuein);
 
                 $formatter = new SamplerateFormatter($row['sample_rate']);
                 $row['sample_rate'] = $formatter->format();

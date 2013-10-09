@@ -26,6 +26,8 @@ class Application_Model_Scheduler
     {
         $this->con = Propel::getConnection(CcSchedulePeer::DATABASE_NAME);
 
+        //TODO why subtracting randomly from epochNow???
+        
         //subtracting one because sometimes when we cancel a track, we set its end time
         //to epochNow and then send the new schedule to pypo. Sometimes the currently cancelled
         //track can still be included in the new schedule because it may have a few ms left to play.
@@ -197,18 +199,14 @@ class Application_Model_Scheduler
 
             if (is_null($file) || !$file->visible()) {
                 throw new Exception(_("A selected File does not exist!"));
-            } else {
+            } 
+            else {
                 $data = $this->fileInfo;
                 $data["id"] = $id;
 
-                $cuein = Application_Common_DateHelper::playlistTimeToSeconds($file->getDbCuein());
-                $cueout = Application_Common_DateHelper::playlistTimeToSeconds($file->getDbCueout());
-                $row_length = Application_Common_DateHelper::secondsToPlaylistTime($cueout - $cuein);
-
-                $data["cliplength"] = $row_length;
-
                 $data["cuein"] = $file->getDbCuein();
                 $data["cueout"] = $file->getDbCueout();
+                $data["cliplength"] = $file->getCueLength();
 
                 //fade is in format SS.uuuuuu
                 $data["fadein"] = Application_Model_Preference::GetDefaultFadeIn();
@@ -264,10 +262,7 @@ class Application_Model_Scheduler
                                 $data["id"] = $file->getDbId();
                                 $data["cuein"] = $file->getDbCuein();
                                 $data["cueout"] = $file->getDbCueout();
-
-                                $cuein = Application_Common_DateHelper::calculateLengthInSeconds($data["cuein"]);
-                                $cueout = Application_Common_DateHelper::calculateLengthInSeconds($data["cueout"]);
-                                $data["cliplength"] = Application_Common_DateHelper::secondsToPlaylistTime($cueout - $cuein);
+                                $data["cliplength"] = $file->getCueLength();
 
                                 //fade is in format SS.uuuuuu
                                 $data["fadein"] = $defaultFadeIn;
@@ -322,11 +317,8 @@ class Application_Model_Scheduler
                     if (isset($file) && $file->visible()) {
                         $data["id"] = $file->getDbId();
                         $data["cuein"] = $file->getDbCuein();
-                        $data["cueout"] = $file->getDbCueout();
-
-                        $cuein = Application_Common_DateHelper::calculateLengthInSeconds($data["cuein"]);
-                        $cueout = Application_Common_DateHelper::calculateLengthInSeconds($data["cueout"]);
-                        $data["cliplength"] = Application_Common_DateHelper::secondsToPlaylistTime($cueout - $cuein);
+                        $data["cueout"] = $file->getDbCueout(); 
+                        $data["cliplength"] = $file->getCueLength();
 
                         //fade is in format SS.uuuuuu
                 		$data["fadein"] = $defaultFadeIn;
@@ -381,7 +373,7 @@ class Application_Model_Scheduler
 
         //add two float numbers to 6 subsecond precision
         //DateTime::createFromFormat("U.u") will have a problem if there is no decimal in the resulting number.
-        $endEpoch = bcadd($startEpoch , (string) $durationSeconds, 6);
+        $endEpoch = bcadd($startEpoch , $durationSeconds, 6);
 
         $dt = DateTime::createFromFormat("U.u", $endEpoch, new DateTimeZone("UTC"));
 
@@ -1095,6 +1087,8 @@ class Application_Model_Scheduler
                     $cueOutSec = bcadd($cueinSec , $length, 6);
                     $cueout = Application_Common_DateHelper::secondsToPlaylistTime($cueOutSec);
 
+                    //TODO what is this -1 seconds???
+                    
                     //Set DbEnds - 1 second because otherwise there can be a timing issue
                     //when sending the new schedule to Pypo where Pypo thinks the track is still
                     //playing.

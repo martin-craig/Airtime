@@ -136,7 +136,7 @@ class Application_Service_SchedulerService
 
         //add two float numbers to 6 subsecond precision
         //DateTime::createFromFormat("U.u") will have a problem if there is no decimal in the resulting number.
-        $endEpoch = bcadd($startEpoch , (string) $durationSeconds, 6);
+        $endEpoch = bcadd($startEpoch , $durationSeconds, 6);
 
         $dt = DateTime::createFromFormat("U.u", $endEpoch, new DateTimeZone("UTC"));
 

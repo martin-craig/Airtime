@@ -233,14 +233,19 @@ SQL;
 
             $clipSec = Application_Common_DateHelper::playlistTimeToSeconds($row['length']);
             
-            $row['trackSec'] = $clipSec;
+            $row['trackSec'] = (float) $clipSec;
             
-            $row['cueInSec'] = Application_Common_DateHelper::playlistTimeToSeconds($row['cuein']);
-            $row['cueOutSec'] = Application_Common_DateHelper::playlistTimeToSeconds($row['cueout']);
+            $row['cueInSec'] = (float) Application_Common_DateHelper::playlistTimeToSeconds($row['cuein']);
+            $row['cueOutSec'] = (float) Application_Common_DateHelper::playlistTimeToSeconds($row['cueout']);
             
             $trackoffset = $row['trackoffset'];
-            $offset += $clipSec;
-            $offset -= $trackoffset;
+            
+            //$offset += $clipSec;
+            //$offset -= $trackoffset;
+            
+            $offset = bcadd($offset, $clipSec, 6);
+            $offset = bcsub($offset, $trackoffset, 6);
+            
             $offset_cliplength = Application_Common_DateHelper::secondsToPlaylistTime($offset);
 
             //format the length for UI.
@@ -413,11 +418,8 @@ SQL;
             $entry["id"]         = $file->getDbId();
             $entry["pos"]        = $pos;
             $entry["cueout"]     = $file->getDbCueout();
-            $entry["cuein"]     = $file->getDbCuein();
-
-            $cue_out = Application_Common_DateHelper::calculateLengthInSeconds($entry['cueout']);
-            $cue_in = Application_Common_DateHelper::calculateLengthInSeconds($entry['cuein']);
-            $entry["cliplength"] = Application_Common_DateHelper::secondsToPlaylistTime($cue_out-$cue_in);
+            $entry["cuein"]      = $file->getDbCuein();
+            $entry["cliplength"] = Application_Common_DateHelper::findClipLength($entry['cuein'], $entry['cueout']);
 
             return $entry;
         } else {
@@ -1288,7 +1290,9 @@ SQL;
         	
             $id = $iterator->current()->getDbId();
             $fileLength = $iterator->current()->getCueLength();
-            $length = Application_Common_DateHelper::calculateLengthInSeconds($fileLength);
+            
+            //TODO make this use precision math
+            $length = (float) Application_Common_DateHelper::playlistTimeToSeconds($fileLength);
             $insertList[] = array('id'=>$id, 'length'=>$length);
             $totalTime += $length;
             $totalItems++;

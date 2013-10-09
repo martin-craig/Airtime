@@ -1108,7 +1108,7 @@ SQL;
     private static function getPercentScheduled($p_starts, $p_ends, $p_time_filled)
     {
         $durationSeconds = (strtotime($p_ends) - strtotime($p_starts));
-        $time_filled = Application_Model_Schedule::WallTimeToMillisecs($p_time_filled) / 1000;
+        $time_filled = Application_Common_DateHelper::playlistTimeToSeconds($p_time_filled);
         $percent = ceil(( $time_filled / $durationSeconds) * 100);
 
         return $percent;

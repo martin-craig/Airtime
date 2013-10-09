@@ -245,14 +245,19 @@ SQL;
         	//Logging::info($row);
         	
             $clipSec = Application_Common_DateHelper::playlistTimeToSeconds($row['length']);
-            $row['trackSec'] = $clipSec;
+            $row['trackSec'] = (float) $clipSec;
             
-            $row['cueInSec'] = Application_Common_DateHelper::playlistTimeToSeconds($row['cuein']);
-            $row['cueOutSec'] = Application_Common_DateHelper::playlistTimeToSeconds($row['cueout']);
+            $row['cueInSec'] = (float) Application_Common_DateHelper::playlistTimeToSeconds($row['cuein']);
+            $row['cueOutSec'] = (float) Application_Common_DateHelper::playlistTimeToSeconds($row['cueout']);
             
             $trackoffset = $row['trackoffset'];
-            $offset += $clipSec;
-            $offset -= $trackoffset;
+            
+            //$offset += $clipSec;
+            //$offset -= $trackoffset;
+            
+            $offset = bcadd($offset, $clipSec, 6);
+            $offset = bcsub($offset, $trackoffset, 6);
+            
             $offset_cliplength = Application_Common_DateHelper::secondsToPlaylistTime($offset);
 
             //format the length for UI.
@@ -421,15 +426,9 @@ SQL;
                     
                     $entry["cueout"] = isset($p_item['cueout']) ? 
                     		$p_item['cueout'] : $obj->getDbCueout();
-
-                    $cue_in = isset($p_item['cueInSec']) ? 
-                    		$p_item['cueInSec'] : Application_Common_DateHelper::calculateLengthInSeconds($entry['cuein']);
-                    
-                    $cue_out = isset($p_item['cueOutSec']) ? 
-                    		$p_item['cueOutSec'] : Application_Common_DateHelper::calculateLengthInSeconds($entry['cueout']);
-                    
+   
                     $entry["cliplength"] = isset($p_item['length']) ? 
-                    		$p_item['length'] : Application_Common_DateHelper::secondsToPlaylistTime($cue_out-$cue_in);
+                    		$p_item['length'] : Application_Common_DateHelper::findClipLength($entry['cuein'], $entry['cueout']);
                 } 
                 elseif ($obj instanceof CcWebstream && $obj) {
                     $entry["cuein"] = "00:00:00";

@@ -18,13 +18,7 @@ class CcFiles extends BaseCcFiles {
 		$cuein = $this->getDbCuein();
 		$cueout = $this->getDbCueout();
 		
-		$cueinSec = Application_Common_DateHelper::calculateLengthInSeconds($cuein);
-		$cueoutSec = Application_Common_DateHelper::calculateLengthInSeconds($cueout);
-		$lengthSec = bcsub($cueoutSec, $cueinSec, 6);
-		
-		$length = Application_Common_DateHelper::secondsToPlaylistTime($lengthSec);
-		
-		return $length;
+		return Application_Common_DateHelper::findClipLength($cuein, $cueout);
 	}
 
     public function getDbLength($format = "H:i:s.u")

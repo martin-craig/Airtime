@@ -6,6 +6,7 @@ from datetime import timedelta
 
 import eventtypes
 import time
+import pure
 
 class PypoLiquidsoap():
     def __init__(self, logger, telnet_lock, host, port):
@@ -208,23 +209,13 @@ class PypoLiquidsoap():
         link_start = link['start']
 
         diff_td = tnow - link_start
-        diff_sec = self.date_interval_to_seconds(diff_td)
+        diff_sec = pure.date_interval_to_seconds(diff_td)
 
         if diff_sec > 0:
             self.logger.debug("media item was supposed to start %s ago. Preparing to start..", diff_sec)
             original_cue_in_td = timedelta(seconds=float(link['cue_in']))
-            link['cue_in'] = self.date_interval_to_seconds(original_cue_in_td) + diff_sec
+            link['cue_in'] = pure.date_interval_to_seconds(original_cue_in_td) + diff_sec
 
-    def date_interval_to_seconds(self, interval):
-        """
-        Convert timedelta object into int representing the number of seconds. If
-        number of seconds is less than 0, then return 0.
-        """
-        seconds = (interval.microseconds + \
-                   (interval.seconds + interval.days * 24 * 3600) * 10 ** 6) / float(10 ** 6)
-        if seconds < 0: seconds = 0
-
-        return seconds
 
     def clear_all_queues(self):
         self.telnet_liquidsoap.queue_clear_all()

@@ -282,12 +282,9 @@ class Application_Model_ShowBuilder
             $row["starts"]   = $schedStartDT->format("H:i:s");
             $row["ends"]     = $schedEndDT->format("H:i:s");
             
-            $cue_out = Application_Common_DateHelper::calculateLengthInSeconds($p_item['cue_out']);
-            $cue_in = Application_Common_DateHelper::calculateLengthInSeconds($p_item['cue_in']);
+            $run_time = Application_Common_DateHelper::findClipLength($p_item['cue_in'], $p_item['cue_out']);
             
-            $run_time = $cue_out-$cue_in;
-            
-            $formatter       = new LengthFormatter(Application_Common_DateHelper::ConvertMSToHHMMSSmm($run_time*1000));
+            $formatter       = new LengthFormatter($run_time);
             $row['runtime']  = $formatter->format();
 
             $row["title"]    = htmlspecialchars($p_item["file_track_title"]);

@@ -147,38 +147,10 @@ class Application_Common_DateHelper
         $offset = $this->getLocalTimeZoneOffset();
         return (int)(($offset % 3600) / 60);
     }
-
-    public static function TimeDiff($time1, $time2)
-    {
-        return strtotime($time2) - strtotime($time1);
-    }
     
     public static function TimeAdd($time1, $time2)
     {
         return strtotime($time2) + strtotime($time1);
-    }
-
-    public static function ConvertMSToHHMMSSmm($time)
-    {
-        $hours = floor($time / 3600000);
-        $time -= 3600000*$hours;
-
-        $minutes = floor($time / 60000);
-        $time -= 60000*$minutes;
-
-        $seconds = floor($time / 1000);
-        $time -= 1000*$seconds;
-
-        $ms = $time;
-
-        if (strlen($hours) == 1)
-        $hours = "0".$hours;
-        if (strlen($minutes) == 1)
-        $minutes = "0".$minutes;
-        if (strlen($seconds) == 1)
-        $seconds = "0".$seconds;
-
-        return $hours.":".$minutes.":".$seconds.".".$ms;
     }
 
     /**
@@ -214,35 +186,6 @@ class Application_Common_DateHelper
     public static function getTimeFromTimestamp($p_dateTime){
         $explode = explode(" ", $p_dateTime);
         return $explode[1];
-    }
-
-    /* Given a track length in the format HH:MM:SS.mm, we want to
-     * convert this to seconds. This is useful for Liquidsoap which
-     * likes input parameters give in seconds.
-     * For example, 00:06:31.444, should be converted to 391.444 seconds
-     * @param int $p_time
-     *      The time interval in format HH:MM:SS.mm we wish to
-     *      convert to seconds.
-     * @return float
-     *      The input parameter converted to seconds.
-     */
-    public static function calculateLengthInSeconds($p_time){
-
-        if (2 !== substr_count($p_time, ":")){
-            return false;
-        }
-        
-        if (1 === substr_count($p_time, ".")){
-            list($hhmmss, $ms) = explode(".", $p_time);
-        } else {
-            $hhmmss = $p_time;
-            $ms = 0;
-        }
-
-        list($hours, $minutes, $seconds) = explode(":", $hhmmss);
-        
-        $totalSeconds = ($hours*3600 + $minutes*60 + $seconds).".$ms";
-        return round($totalSeconds, 3);
     }
 
     public static function ConvertToUtcDateTime($p_dateString, $timezone=null){
@@ -365,35 +308,56 @@ class Application_Common_DateHelper
     /**
      * This function is used for calculations! Don't modify for display purposes!
      *
-     * Convert playlist time value to float seconds
+     * Convert playlist time value to a string value in seconds using precision math
      *
      * @param string $plt
-     *         playlist interval value (HH:mm:ss.dddddd)
-     * @return int
-     *         seconds
+     *         time in format HH:mm:ss.u
+     * @return string
+     *         time in format U.u
      */
     public static function playlistTimeToSeconds($plt)
     {
         $arr =  preg_split('/:/', $plt);
-        if (isset($arr[2])) {
-            return (intval($arr[0])*60 + intval($arr[1]))*60 + floatval($arr[2]);
+        $count = count($arr);
+        
+        //hours exist
+        if ($count == 3) {
+        	
+        	$hours = intval($arr[0]) * 3600;
+        	$minutes = intval($arr[1]) * 60;
+        	$seconds = $arr[2];
+        	
+        	$res = $hours + $minutes;
+        	$res = bcadd($res, $seconds, 6);	
         }
-        if (isset($arr[1])) {
-            return intval($arr[0])*60 + floatval($arr[1]);
+        
+        //minutes exist.
+        else if ($count == 2) {
+        	
+        	$minutes = intval($arr[0]) * 60;
+        	$seconds = $arr[1];
+
+        	$res = bcadd($minutes, $seconds, 6);
+        }
+        
+        //seconds exist
+        else {
+        	$res = $arr[0];
         }
     
-        return floatval($arr[0]);
+        return $res;
     }
     
     
     /**
      *  This function is used for calculations! Don't modify for display purposes!
      *
-     * Convert float seconds value to playlist time format
+     * Convert seconds value to playlist time format
      *
-     * @param  float  $seconds
+     * @param  string  $seconds
+     * 			time in format U.u
      * @return string
-     *         interval in playlist time format (HH:mm:ss.d)
+     *          time in format HH:mm:ss.u
      */
     public static function secondsToPlaylistTime($p_seconds)
     {
@@ -412,6 +376,30 @@ class Application_Common_DateHelper
         $res = sprintf("%02d:%02d:%02d.%s", $hours, $minutes, $seconds, $milliStr);
     
         return $res;
+    }
+    
+    /**
+     *
+     * Finds the cliplength of a media item given a cuein and a cueout
+     * (Uses precision math)
+     *
+     * @param  string  $cuein
+     * 			time in format HH:mm:ss.u
+     * 
+     * @param  string  $cueout
+     * 			time in format HH:mm:ss.u
+     * 
+     * @return string
+     *          time in format HH:mm:ss.u
+     */
+    public static function findClipLength($cuein, $cueout)
+    {
+    	$cueinSec = self::playlistTimeToSeconds($cuein);
+    	$cueoutSec = self::playlistTimeToSeconds($cueout);
+    	
+    	$durationSec = bcsub($cueoutSec, $cueinSec, 6);
+    	
+    	return self::secondsToPlaylistTime($durationSec);
     }
 }
 

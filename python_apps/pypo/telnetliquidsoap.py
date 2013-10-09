@@ -7,8 +7,8 @@ def create_liquidsoap_annotation(media):
             'liq_fade_out="%s",liq_cue_in="%s",liq_cue_out="%s",' + \
             'schedule_table_id="%s",replay_gain="%s dB":%s') % \
             (media['id'], 
-                    float(media['fade_in']) / 1000, 
-                    float(media['fade_out']) / 1000, 
+                    float(media['fade_in']), 
+                    float(media['fade_out']), 
                     float(media['cue_in']), 
                     float(media['cue_out']), 
                     media['row_id'], 
