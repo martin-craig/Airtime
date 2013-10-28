@@ -1,6 +1,11 @@
 <?php
 
+namespace Airtime;
 
+use \DateTime;
+use \DateTimeZone;
+use \DateInterval;
+use Airtime\om\BaseCcShowDays;
 
 /**
  * Skeleton subclass for representing a row from the 'cc_show_days' table.

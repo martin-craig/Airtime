@@ -1,5 +1,12 @@
 <?php
 
+namespace Airtime;
+
+use \DateTime;
+use \PropelException;
+use \Exception;
+use Airtime\om\BaseCcBlockcontents;
+use Airtime\CcBlockcontentsPeer;
 
 
 /**

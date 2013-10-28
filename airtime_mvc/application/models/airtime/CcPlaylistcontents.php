@@ -1,5 +1,13 @@
 <?php
 
+namespace Airtime;
+
+use \DateTime;
+use \Exception;
+use \PropelException;
+use Airtime\om\BaseCcPlaylistcontents;
+use Airtime\CcPlaylistcontentsPeer;
+
 /**
  * Skeleton subclass for representing a row from the 'cc_playlistcontents' table.
  *

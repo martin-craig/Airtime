@@ -1,6 +1,12 @@
 <?php
 
+namespace Airtime;
 
+use \DateTime;
+use \DateTimeZone;
+use \Exception;
+use \PropelException;
+use Airtime\om\BaseCcBlock;
 
 /**
  * Skeleton subclass for representing a row from the 'cc_block' table.

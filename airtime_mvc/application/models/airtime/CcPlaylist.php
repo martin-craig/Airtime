@@ -1,6 +1,12 @@
 <?php
 
+namespace Airtime;
 
+use \DateTime;
+use \DateTimeZone;
+use \Exception;
+use \PropelException;
+use Airtime\om\BaseCcPlaylist;
 
 /**
  * Skeleton subclass for representing a row from the 'cc_playlist' table.

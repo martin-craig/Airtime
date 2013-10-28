@@ -1,6 +1,12 @@
 <?php
 
+namespace Airtime;
 
+use \DateTime;
+use \DateTimeZone;
+use \Exception;
+use \PropelException;
+use Airtime\om\BaseCcSchedule;
 
 /**
  * Skeleton subclass for representing a row from the 'cc_schedule' table.
