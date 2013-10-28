@@ -26,16 +26,14 @@ class Rest_ShowController extends Zend_Rest_Controller
     }
     public function getAction()
     {
-        $this->getResponse()
-            ->appendBody("From getAction() returning the requested article");
+        //$this->getResponse()
+        //    ->appendBody("From getAction() returning the requested article");
 
         if (!$id = $this->_getParam('id', false)) {
                 // report error, redirect, etc.
         } 
-        $this->getResponse()
-            ->appendBody("<br>" . "Id is: " . $id);
 
-        $query = CcShowQuery::create();
+        $query = Airtime\CcShowQuery::create();
         $show = $query->findPk($id);
 
         Logging::info($show); 
