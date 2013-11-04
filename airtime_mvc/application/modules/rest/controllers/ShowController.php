@@ -48,25 +48,33 @@ class Rest_ShowController extends Zend_Rest_Controller
     
     public function postAction()
     {
+    	$isUpdate = false;
+    	
         if (!$this->verifyApiKey()) {
             return;
         }
-        //If we do get an ID on a POST, then that doesn't make any sense
-        //since POST is only for creating.
+
         if ($id = $this->_getParam('id', false)) {
-            $resp = $this->getResponse();
-            $resp->setHttpResponseCode(400);
-            $resp->appendBody("ERROR: ID should not be specified when using POST. POST is only used for show creation, and an ID will be chosen by Airtime"); 
-            return;
+        	$isUpdate = true;
+            //$resp = $this->getResponse();
+            //$resp->setHttpResponseCode(400);
+            //$resp->appendBody("ERROR: ID should not be specified when using POST. POST is only used for show creation, and an ID will be chosen by Airtime"); 
         }
 
-        $show = new Airtime\CcShow(); 
-        $rawRequestBody = $this->getRequest()->getRawBody();
-        //Hacky check to see if the request is a whole JSON object (updating a Show)
-        if ($rawRequestBody[0] == '{') {
-            $show->importFrom('JSON', $rawRequestBody);
-            $show->save();
-            return;
+        if (!$isUpdate)
+        {
+	        $show = new Airtime\CcShow(); 
+	        $rawRequestBody = $this->getRequest()->getRawBody();
+	        //Hacky check to see if the request is a whole JSON object (updating a Show)
+	        if ($rawRequestBody[0] == '{') {
+	            $show->importFrom('JSON', $rawRequestBody);
+	            //Only update an existing show object if we were passed an id!
+	            if ($show->getDbId() > 0)
+	            {
+	            	$show->save();
+	            	return;    
+	            }
+	        }
         }
 
         //Otherwise, we're assuming this is a request to create a new show, using
@@ -77,6 +85,51 @@ class Rest_ShowController extends Zend_Rest_Controller
         //TODO: Then create a show instance?
         //if ($id = $this->_getParam('id', false)) {
         //stat
+        
+        //TODO: Here's how I think we can easily do show creation:
+        // 	- More or less copy what SchedulerControler::addShowAction() does. (copy the contents of that function)
+      
+        $js = $this->_getParam('data', []);
+        $data = array();
+        
+        //need to convert from serialized jQuery array.
+        foreach ($js as $j) {
+        	$data[$j["name"]] = $j["value"];
+        }
+        
+        $service_show = new Application_Service_ShowService(null, $data);
+        
+        // TODO: move this to js
+        $data['add_show_hosts']     = $this->_getParam('hosts');
+        $data['add_show_day_check'] = $this->_getParam('days');
+        
+        if ($data['add_show_day_check'] == "") {
+        	$data['add_show_day_check'] = null;
+        }
+
+        //FIXME: This line doesn't work...
+        $scheduleController = new ScheduleController();
+        $showFormService = new Application_Service_ShowFormService(null, $data);
+        
+        $forms = $scheduleController->createShowFormAction();
+        
+        $showFormService->view->addNewShow = true;
+        
+        if ($service_showForm->validateShowForms($forms, $data)) {
+        	$service_show->addUpdateShow($data);
+        
+        	//send new show forms to the user
+        	//$showFormService->createShowFormAction(true);
+        	//$this->view->newForm = $this->view->render('schedule/add-show-form.phtml');
+        
+        	Logging::debug("Show creation succeeded");
+        } else {
+        	//$this->view->form = $this->view->render('schedule/add-show-form.phtml');
+        	Logging::debug("Show creation failed");
+        }
+        
+
+    
     }
     
     public function putAction()
