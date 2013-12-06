@@ -1041,17 +1041,6 @@ SQL;
 
         $formRepeats->populate(array('add_show_end_date' => date("Y-m-d")));
 
-            $formRecord = new Application_Form_AddShowRR();
-            $formAbsoluteRebroadcast = new Application_Form_AddShowAbsoluteRebroadcastDates();
-            $formRebroadcast = new Application_Form_AddShowRebroadcastDates();
-
-            $formRecord->removeDecorator('DtDdWrapper');
-            $formAbsoluteRebroadcast->removeDecorator('DtDdWrapper');
-            $formRebroadcast->removeDecorator('DtDdWrapper');
-
-            $p_view->rr = $formRecord;
-            $p_view->absoluteRebroadcast = $formAbsoluteRebroadcast;
-            $p_view->rebroadcast = $formRebroadcast;
         $p_view->addNewShow = true;
     }*/
 
@@ -1076,13 +1065,6 @@ SQL;
         $formStyle->removeDecorator('DtDdWrapper');
         $formLive->removeDecorator('DtDdWrapper');
 
-            $formRecord = new Application_Form_AddShowRR();
-            $formAbsoluteRebroadcast = new Application_Form_AddShowAbsoluteRebroadcastDates();
-            $formRebroadcast = new Application_Form_AddShowRebroadcastDates();
-
-            $formRecord->removeDecorator('DtDdWrapper');
-            $formAbsoluteRebroadcast->removeDecorator('DtDdWrapper');
-            $formRebroadcast->removeDecorator('DtDdWrapper');
         $when = $formWhen->isValid($data);
 
         if ($when && $formWhen->checkReliantFields($data, true, null, true)) {
@@ -1116,13 +1098,6 @@ SQL;
             $controller->view->who     = $formWho;
             $controller->view->style   = $formStyle;
             $controller->view->live    = $formLive;
-                $controller->view->rr = $formRecord;
-                $controller->view->absoluteRebroadcast = $formAbsoluteRebroadcast;
-                $controller->view->rebroadcast = $formRebroadcast;
-
-                //$formRecord->disable();
-                //$formAbsoluteRebroadcast->disable();
-                //$formRebroadcast->disable();
 
             return false;
         }
@@ -1188,79 +1163,27 @@ SQL;
 
         $data["add_show_duration"] = $hValue.":".$mValue;
 
-        $formRecord = new Application_Form_AddShowRR();
-        $formAbsoluteRebroadcast = new Application_Form_AddShowAbsoluteRebroadcastDates();
-        $formRebroadcast = new Application_Form_AddShowRebroadcastDates();
-
-        $formRecord->removeDecorator('DtDdWrapper');
-        $formAbsoluteRebroadcast->removeDecorator('DtDdWrapper');
-        $formRebroadcast->removeDecorator('DtDdWrapper');
-
-
-            $record = $formRecord->isValid($data);
-
         if ($data["add_show_repeats"]) {
             $repeats = $formRepeats->isValid($data);
             if ($repeats) {
                 $repeats = $formRepeats->checkReliantFields($data);
             }
-            $formAbsoluteRebroadcast->reset();
-            //make it valid, results don't matter anyways.
-            $rebroadAb = 1;
-
-            if ($data["add_show_rebroadcast"]) {
-                $rebroad = $formRebroadcast->isValid($data);
-                if ($rebroad) {
-                    $rebroad = $formRebroadcast->checkReliantFields($data);
-                }
-            } else {
-                $rebroad = 1;
-            }
         } else {
             $repeats = 1;
-                $formRebroadcast->reset();
-                 //make it valid, results don't matter anyways.
-                $rebroad = 1;
-
-                if ($data["add_show_rebroadcast"]) {
-                    $rebroadAb = $formAbsoluteRebroadcast->isValid($data);
-                    if ($rebroadAb) {
-                        $rebroadAb = $formAbsoluteRebroadcast->checkReliantFields($data);
-                    }
-                } else {
-                    $rebroadAb = 1;
-                }
         }
 
         $who = $formWho->isValid($data);
         $style = $formStyle->isValid($data);
         if ($what && $when && $repeats && $who && $style && $live) {
-                if ($record && $rebroadAb && $rebroad) {
-                    if ($isAdminOrPM) {
-                        Application_Model_Show::create($data);
-                    }
+            if ($isAdminOrPM) {
+                Application_Model_Show::create($data);
+            }
 
-                    //send back a new form for the user.
-                    Application_Model_Schedule::createNewFormSections($controller->view);
+            //send back a new form for the user.
+            Application_Model_Schedule::createNewFormSections($controller->view);
 
-                    //$controller->view->newForm = $controller->view->render('schedule/add-show-form.phtml');
-                    return true;
-                } else {
-                    $controller->view->what = $formWhat;
-                    $controller->view->when = $formWhen;
-                    $controller->view->repeats = $formRepeats;
-                    $controller->view->who = $formWho;
-                    $controller->view->style = $formStyle;
-                    $controller->view->rr = $formRecord;
-                    $controller->view->absoluteRebroadcast = $formAbsoluteRebroadcast;
-                    $controller->view->rebroadcast = $formRebroadcast;
-                    $controller->view->live = $formLive;
-                    //$controller->view->addNewShow = !$editShow;
-
-                    //$controller->view->form = $controller->view->render('schedule/add-show-form.phtml');
-                    return false;
-
-                }
+            //$controller->view->newForm = $controller->view->render('schedule/add-show-form.phtml');
+            return true;
         } else {
             $controller->view->what    = $formWhat;
             $controller->view->when    = $formWhen;
@@ -1268,9 +1191,6 @@ SQL;
             $controller->view->who     = $formWho;
             $controller->view->style   = $formStyle;
             $controller->view->live    = $formLive;
-            $controller->view->rr = $formRecord;
-            $controller->view->absoluteRebroadcast = $formAbsoluteRebroadcast;
-            $controller->view->rebroadcast = $formRebroadcast;
             //$controller->view->addNewShow = !$editShow;
             //$controller->view->form = $controller->view->render('schedule/add-show-form.phtml');
             return false;
