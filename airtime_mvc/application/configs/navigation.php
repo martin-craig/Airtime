@@ -85,6 +85,13 @@ $pages = array(
                 'controller' => 'listenerstat',
                 'action'     => 'index',
                 'resource'   => 'listenerstat'
+            ),
+            array(
+                'label'      => _('Advanced Listener Stats'),
+                'module'     => 'default',
+                'controller' => 'listenerstat',
+                'action'     => 'adv-listener-stats',
+                'resource'   => 'listenerstat'
             )
         )
     ),
