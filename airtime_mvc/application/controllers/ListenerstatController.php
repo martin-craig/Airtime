@@ -103,4 +103,13 @@ class ListenerstatController extends Zend_Controller_Action
         $data = Application_Model_ListenerStat::getDataPointsWithinRange($startsDT->format("Y-m-d H:i:s"), $endsDT->format("Y-m-d H:i:s"));
         $this->_helper->json->sendJson($data);
     }
+
+    public function advListenerStatsAction()
+    {
+        //
+        $site = Application_Model_Preference::GetPiwikSiteUrl();
+        $siteId = Application_Model_Preference::GetPiwikSiteId();
+        $userToken = Application_Model_Preference::GetPiwikToken();
+        $this->view->iframeUrl = $site.'index.php?module=Widgetize&action=iframe&moduleToWidgetize=Dashboard&actionToWidgetize=index&idSite='.$siteId.'&period=week&date=yesterday&token_auth='.$userToken;
+    }
 }

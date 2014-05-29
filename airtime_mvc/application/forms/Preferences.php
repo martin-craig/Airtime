@@ -18,5 +18,9 @@ class Application_Form_Preferences extends Zend_Form
         $soundcloud_pref = new Application_Form_SoundcloudPreferences();
         $this->addSubForm($soundcloud_pref, 'preferences_soundcloud');
 
+        $piwik_pref = new Application_Form_PiwikPreferences();
+        $this->addSubForm($piwik_pref, 'preferences_piwik');
+
+
     }
 }
