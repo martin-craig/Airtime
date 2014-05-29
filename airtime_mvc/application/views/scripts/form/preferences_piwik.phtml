@@ -1,0 +1,62 @@
+<fieldset class="padded">
+    <dl class="zend_form">
+        <dd id="UsePiwik-element" class="block-display" style=" margin:6px 0 10px 0">
+            <label class="optional" for="UsePiwik">
+                <?php echo $this->element->getElement('UsePiwik'); ?>
+                <strong><?php echo $this->element->getElement('UsePiwik')->getLabel()?></strong>
+            </label>
+            <?php if($this->element->getElement('UsePiwik')->hasErrors()) : ?>
+                <ul class='errors'>
+                    <?php foreach($this->element->getElement('UsePiwik')->getMessages() as $error): ?>
+                        <li><?php echo $error; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </dd>
+        <dt id="PiwikSiteUrl-label" class="block-display">
+            <label class="optional" for="PiwikSiteUrl"><?php echo $this->element->getElement('PiwikSiteUrl')->getLabel() ?>
+                <span class="info-text-small"><?php echo _("(Required)")?></span> :
+            </label>
+        </dt>
+        <dd id="PiwikSiteId-element" class="block-display">
+            <?php echo $this->element->getElement('PiwikSiteUrl') ?>
+            <?php if($this->element->getElement('PiwikSiteUrl')->hasErrors()) : ?>
+                <ul class='errors'>
+                    <?php foreach($this->element->getElement('PiwikSiteUrl')->getMessages() as $error): ?>
+                        <li><?php echo $error; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </dd>
+        <dt id="PiwikSiteId-label" class="block-display">
+            <label class="optional" for="PiwikSiteId"><?php echo $this->element->getElement('PiwikSiteId')->getLabel() ?>
+                <span class="info-text-small"><?php echo _("(Required)")?></span> :
+            </label>
+        </dt>
+        <dd id="PiwikSiteId-element" class="block-display">
+            <?php echo $this->element->getElement('PiwikSiteId') ?>
+            <?php if($this->element->getElement('PiwikSiteId')->hasErrors()) : ?>
+                <ul class='errors'>
+                    <?php foreach($this->element->getElement('PiwikSiteId')->getMessages() as $error): ?>
+                        <li><?php echo $error; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </dd>
+        <dt id="PiwikToken-label" class="block-display">
+            <label class="optional" for="PiwikToken"><?php echo $this->element->getElement('PiwikToken')->getLabel() ?>
+                <span class="info-text-small"><?php echo _("(Required)")?></span> :
+            </label>
+        </dt>
+        <dd id="PiwikToken-element" class="block-display">
+            <?php echo $this->element->getElement('PiwikToken') ?>
+            <?php if($this->element->getElement('PiwikToken')->hasErrors()) : ?>
+                <ul class='errors'>
+                    <?php foreach($this->element->getElement('PiwikToken')->getMessages() as $error): ?>
+                        <li><?php echo $error; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </dd>
+    </dl>
+</fieldset>
