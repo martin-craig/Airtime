@@ -59,6 +59,11 @@ class PreferenceController extends Zend_Controller_Action
                 Application_Model_Preference::SetSoundCloudTrackType($values["SoundCloudTrackType"]);
                 Application_Model_Preference::SetSoundCloudLicense($values["SoundCloudLicense"]);
 
+                Application_Model_Preference::SetPiwik($values["UsePiwik"]);
+                Application_Model_Preference::SetPiwikSiteId($values["PiwikSiteId"]);
+                Application_Model_Preference::SetPiwikToken($values["PiwikToken"]);
+                Application_Model_Preference::SetPiwikSiteUrl($values["PiwikSiteUrl"]);
+
                 $this->view->statusMsg = "<div class='success'>". _("Preferences updated.")."</div>";
                 $this->view->form = $form;
                 $this->_helper->json->sendJson(array("valid"=>"true", "html"=>$this->view->render('preference/index.phtml')));
