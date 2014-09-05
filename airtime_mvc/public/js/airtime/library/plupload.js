@@ -5,7 +5,7 @@ $(document).ready(function() {
 	$("#plupload_files").pluploadQueue({
 		// General settings
 		runtimes        : 'gears, html5, html4',
-		url             :  baseUrl+'Plupload/upload/format/json',
+		url             :  baseDir+'Plupload/upload/format/json',
 		chunk_size      : '5mb',
 		unique_names    : 'true',
 		multiple_queues : 'true',
@@ -28,7 +28,7 @@ $(document).ready(function() {
 			$("#plupload_error table").css("display", "inline-table");
 		}else{
 		    var tempFileName = j.tempfilepath;
-		    $.get(baseUrl+'Plupload/copyfile/format/json/name/'+
+		    $.get(baseDir+'Plupload/copyfile/format/json/name/'+
 		          encodeURIComponent(file.name)+'/tempname/' +
 		          encodeURIComponent(tempFileName), function(jr){
 		        if(jr.error !== undefined) {

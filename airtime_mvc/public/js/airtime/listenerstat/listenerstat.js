@@ -24,7 +24,7 @@ $(document).ready(function() {
 
 function getDataAndPlot(startTimestamp, endTimestamp){
     // get data
-    $.get(baseUrl+'Listenerstat/get-data', {start: startTimestamp, end: endTimestamp}, function(data){
+    $.get(baseDir+'Listenerstat/get-data', {start: startTimestamp, end: endTimestamp}, function(data){
         out = new Object();
         $.each(data, function(mpName, v){
             plotData = new Object();

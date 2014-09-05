@@ -45,7 +45,7 @@ class ScheduleController extends Zend_Controller_Action
     {
         $CC_CONFIG = Config::getConfig();
 
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
 
         $this->view->headScript()->appendScript(
             "var calendarPref = {};\n".
@@ -58,47 +58,47 @@ class ScheduleController extends Zend_Controller_Action
             "var calendarEvents = null;"
         );
 
-        $this->view->headScript()->appendFile($baseUrl.'js/contextmenu/jquery.contextMenu.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/contextmenu/jquery.contextMenu.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 
         //full-calendar-functions.js requires this variable, so that datePicker widget can be offset to server time instead of client time
         //this should be as a default, however with our new drop down timezone changing for shows, we should reset this offset then??
         $this->view->headScript()->appendScript("var timezoneOffset = ".Application_Common_DateHelper::getStationTimezoneOffset()."; //in seconds");
         //set offset to ensure it loads last
-        $this->view->headScript()->offsetSetFile(90, $baseUrl.'js/airtime/schedule/full-calendar-functions.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->offsetSetFile(90, $staticBaseDir.'js/airtime/schedule/full-calendar-functions.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 
-        $this->view->headScript()->appendFile($baseUrl.'js/fullcalendar/fullcalendar.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->appendFile($baseUrl.'js/timepicker/jquery.ui.timepicker.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->appendFile($baseUrl.'js/colorpicker/js/colorpicker.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/fullcalendar/fullcalendar.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/timepicker/jquery.ui.timepicker.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/colorpicker/js/colorpicker.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 
-        $this->view->headScript()->appendFile($baseUrl.'js/airtime/schedule/add-show.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->offsetSetFile(100, $baseUrl.'js/airtime/schedule/schedule.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->appendFile($baseUrl.'js/blockui/jquery.blockUI.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/schedule/add-show.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->offsetSetFile(100, $staticBaseDir.'js/airtime/schedule/schedule.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/blockui/jquery.blockUI.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 
-        $this->view->headLink()->appendStylesheet($baseUrl.'css/jquery.ui.timepicker.css?'.$CC_CONFIG['airtime_version']);
-        $this->view->headLink()->appendStylesheet($baseUrl.'css/fullcalendar.css?'.$CC_CONFIG['airtime_version']);
-        $this->view->headLink()->appendStylesheet($baseUrl.'css/colorpicker/css/colorpicker.css?'.$CC_CONFIG['airtime_version']);
-        $this->view->headLink()->appendStylesheet($baseUrl.'css/add-show.css?'.$CC_CONFIG['airtime_version']);
-        $this->view->headLink()->appendStylesheet($baseUrl.'css/jquery.contextMenu.css?'.$CC_CONFIG['airtime_version']);
+        $this->view->headLink()->appendStylesheet($staticBaseDir.'css/jquery.ui.timepicker.css?'.$CC_CONFIG['airtime_version']);
+        $this->view->headLink()->appendStylesheet($staticBaseDir.'css/fullcalendar.css?'.$CC_CONFIG['airtime_version']);
+        $this->view->headLink()->appendStylesheet($staticBaseDir.'css/colorpicker/css/colorpicker.css?'.$CC_CONFIG['airtime_version']);
+        $this->view->headLink()->appendStylesheet($staticBaseDir.'css/add-show.css?'.$CC_CONFIG['airtime_version']);
+        $this->view->headLink()->appendStylesheet($staticBaseDir.'css/jquery.contextMenu.css?'.$CC_CONFIG['airtime_version']);
 
         //Start Show builder JS/CSS requirements
-        $this->view->headScript()->appendFile($baseUrl.'js/datatables/js/jquery.dataTables.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->appendFile($baseUrl.'js/datatables/plugin/dataTables.pluginAPI.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->appendFile($baseUrl.'js/datatables/plugin/dataTables.fnSetFilteringDelay.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->appendFile($baseUrl.'js/datatables/plugin/dataTables.ColVis.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->appendFile($baseUrl.'js/datatables/plugin/dataTables.ColReorder.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->appendFile($baseUrl.'js/datatables/plugin/dataTables.FixedColumns.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->appendFile($baseUrl.'js/datatables/plugin/dataTables.columnFilter.js?'.$CC_CONFIG['airtime_version'], 'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/datatables/js/jquery.dataTables.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/datatables/plugin/dataTables.pluginAPI.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/datatables/plugin/dataTables.fnSetFilteringDelay.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/datatables/plugin/dataTables.ColVis.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/datatables/plugin/dataTables.ColReorder.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/datatables/plugin/dataTables.FixedColumns.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/datatables/plugin/dataTables.columnFilter.js?'.$CC_CONFIG['airtime_version'], 'text/javascript');
 
-        $this->view->headScript()->appendFile($baseUrl.'js/airtime/buttons/buttons.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->appendFile($baseUrl.'js/airtime/library/events/library_showbuilder.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->appendFile($baseUrl.'js/airtime/library/library.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $this->view->headScript()->appendFile($baseUrl.'js/airtime/showbuilder/builder.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/buttons/buttons.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/library/events/library_showbuilder.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/library/library.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/showbuilder/builder.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 
-        $this->view->headLink()->appendStylesheet($baseUrl.'css/media_library.css?'.$CC_CONFIG['airtime_version']);
-        $this->view->headLink()->appendStylesheet($baseUrl.'css/jquery.contextMenu.css?'.$CC_CONFIG['airtime_version']);
-        $this->view->headLink()->appendStylesheet($baseUrl.'css/datatables/css/ColVis.css?'.$CC_CONFIG['airtime_version']);
-        $this->view->headLink()->appendStylesheet($baseUrl.'css/datatables/css/ColReorder.css?'.$CC_CONFIG['airtime_version']);
-        $this->view->headLink()->appendStylesheet($baseUrl.'css/showbuilder.css?'.$CC_CONFIG['airtime_version']);
+        $this->view->headLink()->appendStylesheet($staticBaseDir.'css/media_library.css?'.$CC_CONFIG['airtime_version']);
+        $this->view->headLink()->appendStylesheet($staticBaseDir.'css/jquery.contextMenu.css?'.$CC_CONFIG['airtime_version']);
+        $this->view->headLink()->appendStylesheet($staticBaseDir.'css/datatables/css/ColVis.css?'.$CC_CONFIG['airtime_version']);
+        $this->view->headLink()->appendStylesheet($staticBaseDir.'css/datatables/css/ColReorder.css?'.$CC_CONFIG['airtime_version']);
+        $this->view->headLink()->appendStylesheet($staticBaseDir.'css/showbuilder.css?'.$CC_CONFIG['airtime_version']);
         //End Show builder JS/CSS requirements
 
         $this->createShowFormAction(true);

@@ -77,7 +77,7 @@ function showForIcecast(ele){
 }
 
 function checkLiquidsoapStatus(){
-    var url = baseUrl+'Preference/get-liquidsoap-status/format/json';
+    var url = baseDir+'Preference/get-liquidsoap-status/format/json';
     var id = $(this).attr("id");
     $.post(url, function(json_obj){
         for(var i=0;i<json_obj.length;i++){
@@ -130,7 +130,7 @@ function setLiveSourceConnectionOverrideListener(){
         live_dj_input.val(url);
         live_dj_input.attr("readonly", "readonly");
         live_dj_actions.hide();
-        $.get(baseUrl+"Preference/set-source-connection-url/", {format: "json", type: "livedj", url:encodeURIComponent(url), override: 1});
+        $.get(baseDir+"Preference/set-source-connection-url/", {format: "json", type: "livedj", url:encodeURIComponent(url), override: 1});
     	event.preventDefault();
     });
     
@@ -145,7 +145,7 @@ function setLiveSourceConnectionOverrideListener(){
         live_dj_input.val(url);
         live_dj_input.attr("readonly", "readonly");
         live_dj_actions.hide();
-        $.get(baseUrl+"Preference/set-source-connection-url", {format: "json", type: "livedj", url:encodeURIComponent(url), override: 0});
+        $.get(baseDir+"Preference/set-source-connection-url", {format: "json", type: "livedj", url:encodeURIComponent(url), override: 0});
     	event.preventDefault();
     });
     
@@ -154,7 +154,7 @@ function setLiveSourceConnectionOverrideListener(){
         master_dj_input.val(url);
         master_dj_input.attr("readonly", "readonly");
         master_dj_actions.hide();
-        $.get(baseUrl+"Preference/set-source-connection-url", {format: "json", type: "masterdj", url:encodeURIComponent(url), override: 1});
+        $.get(baseDir+"Preference/set-source-connection-url", {format: "json", type: "masterdj", url:encodeURIComponent(url), override: 1});
         event.preventDefault();
     });
     
@@ -168,7 +168,7 @@ function setLiveSourceConnectionOverrideListener(){
         master_dj_input.val(url);
         master_dj_input.attr("readonly", "readonly");
         master_dj_actions.hide();
-        $.get(baseUrl+"Preference/set-source-connection-url", {format: "json", type: "masterdj", url:encodeURIComponent(url), override: 0});
+        $.get(baseDir+"Preference/set-source-connection-url", {format: "json", type: "masterdj", url:encodeURIComponent(url), override: 0});
         event.preventDefault();
     });
 }
@@ -454,7 +454,7 @@ function setPseudoAdminPassword(s1, s2, s3) {
 }
 
 function getAdminPasswordStatus() {
-    $.ajax({ url: baseUrl+'Preference/get-admin-password-status/format/json', dataType:"json", success:function(data){
+    $.ajax({ url: baseDir+'Preference/get-admin-password-status/format/json', dataType:"json", success:function(data){
         setPseudoAdminPassword(data.s1, data.s2, data.s3);
       }});   
 }
@@ -468,7 +468,7 @@ $(document).ready(function() {
         var confirm_pypo_restart_text = $.i18n._("If you change the username or password values for an enabled stream the playout engine will be rebooted and your listeners will hear silence for 5-10 seconds. Changing the following fields will NOT cause a reboot: Stream Label (Global Settings), and Switch Transition Fade(s), Master Username, and Master Password (Input Stream Settings). If Airtime is recording, and if the change causes a playout engine restart, the recording will be interrupted.");
         if (confirm(confirm_pypo_restart_text)) {
             var data = $('#stream_form').serialize();
-            var url = baseUrl+'Preference/stream-setting';
+            var url = baseDir+'Preference/stream-setting';
 
             $.post(url, {format:"json", data: data}, function(json){
                 $('#content').empty().append(json.html);

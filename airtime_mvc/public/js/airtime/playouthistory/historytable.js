@@ -9,7 +9,7 @@ var AIRTIME = (function(AIRTIME) {
     var $historyContentDiv;
     
     var oTableTools = {
-        "sSwfPath": baseUrl+"js/datatables/plugin/TableTools-2.1.5/swf/copy_csv_xls_pdf.swf",
+        "sSwfPath": staticBaseDir+"js/datatables/plugin/TableTools-2.1.5/swf/copy_csv_xls_pdf.swf",
         "aButtons": [
              {
                  "sExtends": "copy",
@@ -323,7 +323,7 @@ var AIRTIME = (function(AIRTIME) {
         	fnRowCallback;
 
         fnRowCallback = function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-        	var editUrl = baseUrl+"playouthistory/edit-file-item/id/"+aData.file_id,
+        	var editUrl = baseDir+"playouthistory/edit-file-item/id/"+aData.file_id,
         		$nRow = $(nRow);
         		
         	$nRow.data('url-edit', editUrl);
@@ -337,7 +337,7 @@ var AIRTIME = (function(AIRTIME) {
                           
             "bProcessing": true,
             "bServerSide": true,
-            "sAjaxSource": baseUrl+"playouthistory/file-history-feed",
+            "sAjaxSource": baseDir+"playouthistory/file-history-feed",
             "sAjaxDataProp": "history",
             "fnServerData": fnServerData,
             "fnRowCallback": fnRowCallback,
@@ -375,8 +375,8 @@ var AIRTIME = (function(AIRTIME) {
         }
 
         fnRowCallback = function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-        	var editUrl = baseUrl+"playouthistory/edit-list-item/id/"+aData.history_id,
-        		deleteUrl = baseUrl+"playouthistory/delete-list-item/id/"+aData.history_id,
+        	var editUrl = baseDir+"playouthistory/edit-list-item/id/"+aData.history_id,
+        		deleteUrl = baseDir+"playouthistory/delete-list-item/id/"+aData.history_id,
         		emptyCheckBox = String.fromCharCode(parseInt(2610, 16)),
         		checkedCheckBox = String.fromCharCode(parseInt(2612, 16)),
         		b, 
@@ -404,7 +404,7 @@ var AIRTIME = (function(AIRTIME) {
             "aoColumns": columns,             
             "bProcessing": true,
             "bServerSide": true,
-            "sAjaxSource": baseUrl+"playouthistory/item-history-feed",
+            "sAjaxSource": baseDir+"playouthistory/item-history-feed",
             "sAjaxDataProp": "history",
             "fnServerData": fnServerData,
             "fnRowCallback": fnRowCallback,
@@ -426,7 +426,7 @@ var AIRTIME = (function(AIRTIME) {
     }
     
     function showSummaryList(start, end) {
-    	var url = baseUrl+"playouthistory/show-history-feed",
+    	var url = baseDir+"playouthistory/show-history-feed",
     		data = {
     			format: "json",
 	    		start: start,
@@ -601,7 +601,7 @@ var AIRTIME = (function(AIRTIME) {
     		.blur(validateTimeRange);
     	
     	$historyContentDiv.on("click", "#his_create", function(e) {
-    		var url = baseUrl+"playouthistory/edit-list-item/format/json"	;
+    		var url = baseDir+"playouthistory/edit-list-item/format/json"	;
     		
     		e.preventDefault();
     		
@@ -623,7 +623,7 @@ var AIRTIME = (function(AIRTIME) {
     		var $form = $(this).parents("form");
     		var data = $form.serializeArray();
     		
-    		var url = baseUrl+"Playouthistory/update-file-item/format/json";
+    		var url = baseDir+"Playouthistory/update-file-item/format/json";
     		
     		$.post(url, data, function(json) {
     			
@@ -647,8 +647,8 @@ var AIRTIME = (function(AIRTIME) {
     		var $form = $(this).parents("form"),
     			data = $form.serializeArray(),
     			id = data[0].value,
-    			createUrl = baseUrl+"Playouthistory/create-list-item/format/json",
-    			updateUrl = baseUrl+"Playouthistory/update-list-item/format/json",
+    			createUrl = baseDir+"Playouthistory/create-list-item/format/json",
+    			updateUrl = baseDir+"Playouthistory/update-list-item/format/json",
     			url,
     			$select = $hisDialogEl.find("#his_instance_select"),
     			instance;
@@ -705,7 +705,7 @@ var AIRTIME = (function(AIRTIME) {
     	$('body').on("click", "#his_instance_retrieve", function(e) {
     		var startPicker = $hisDialogEl.find('#his_item_starts'),
 				endPicker = $hisDialogEl.find('#his_item_ends'),
-				url = baseUrl+"playouthistory/show-history-feed",
+				url = baseDir+"playouthistory/show-history-feed",
 				startDate = startPicker.val(),
 				endDate = endPicker.val(),
 				data;
@@ -776,7 +776,7 @@ var AIRTIME = (function(AIRTIME) {
     	
     	$historyContentDiv.on("click", "#his_trash", function(ev){
     		var items = getSelectedLogItems(),
-    			url = baseUrl+"playouthistory/delete-list-items";
+    			url = baseDir+"playouthistory/delete-list-items";
     		
     		$.post(url, {ids: items, format: "json"}, function() {
     			selectedLogItems = {};

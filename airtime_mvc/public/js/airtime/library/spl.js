@@ -67,7 +67,7 @@ var AIRTIME = (function(AIRTIME){
         event.stopPropagation();
         var span = $(this),
             id = span.parent().attr("id").split("_").pop(),
-            url = baseUrl+"Playlist/set-cue",
+            url = BaseDir+"Playlist/set-cue",
             cueIn = $.trim(span.text()),
             li = span.parents("li"),
             unqid = li.attr("unqid"),
@@ -104,7 +104,7 @@ var AIRTIME = (function(AIRTIME){
         event.stopPropagation();
         var span = $(this),
             id = span.parent().attr("id").split("_").pop(),
-            url = baseUrl+"Playlist/set-cue",
+            url = BaseDir+"Playlist/set-cue",
             cueOut = $.trim(span.text()),
             li = span.parents("li"),
             unqid = li.attr("unqid"),
@@ -141,7 +141,7 @@ var AIRTIME = (function(AIRTIME){
     /* used from waveform pop-up */
     function changeCues($el, id, cueIn, cueOut) {
         
-        var url = baseUrl+"Playlist/set-cue",
+        var url = BaseDir+"Playlist/set-cue",
             lastMod = getModified(),
             type = $('#obj_type').val(),
             li,
@@ -211,7 +211,7 @@ var AIRTIME = (function(AIRTIME){
     /* used from waveform pop-up */
     function changeCrossfade($el, id1, id2, fadeIn, fadeOut, offset, id) {
         
-        var url = baseUrl+"Playlist/set-crossfade",
+        var url = BaseDir+"Playlist/set-crossfade",
             lastMod = getModified(),
             type = $('#obj_type').val();
         
@@ -240,7 +240,7 @@ var AIRTIME = (function(AIRTIME){
 
         var span = $(this),
             id = span.parent().attr("id").split("_").pop(),
-            url = baseUrl+"Playlist/set-fade",
+            url = BaseDir+"Playlist/set-fade",
             fadeIn = $.trim(span.text()),
             li = span.parents("li"),
             unqid = li.attr("unqid"),
@@ -278,7 +278,7 @@ var AIRTIME = (function(AIRTIME){
 
 		var span = $(this),
 			id = span.parent().attr("id").split("_").pop(),
-			url = baseUrl+"Playlist/set-fade",
+			url = BaseDir+"Playlist/set-fade",
 			fadeOut = $.trim(span.text()),
 			li = span.parents("li"),
 			unqid = li.attr("unqid"),
@@ -363,7 +363,7 @@ var AIRTIME = (function(AIRTIME){
 	   
         /* --until we decide whether Playlist name should autosave or not
 
-    	url = baseUrl+'Playlist/set-playlist-name';
+    	url = BaseDir+'Playlist/set-playlist-name';
 
 	    $.post(url, 
 	    	{format: "json", name: nameElement.text(), modified: lastMod, type: type}, 
@@ -559,7 +559,7 @@ var AIRTIME = (function(AIRTIME){
 		            var id = parseInt($(this).attr("id").split("_").pop(), 10);
 		            var blockId = parseInt($(this).attr("blockId"), 10);
 		            if ($(this).hasClass('close')) {
-                        var sUrl = baseUrl+"playlist/get-block-info";
+                        var sUrl = BaseDir+"playlist/get-block-info";
                         mod.disableUI();
                         $.post(sUrl, {format:"json", id:blockId}, function(data){
                             $html = "";
@@ -655,7 +655,7 @@ var AIRTIME = (function(AIRTIME){
 	        else {
 	            $(this).addClass("ui-state-active");
 
-	            var url = baseUrl+'Playlist/get-playlist-fades';
+	            var url = BaseDir+'Playlist/get-playlist-fades';
 		        $.post(url, 
 		        	{format: "json", modified: lastMod, type: type},
 		        	function(json){
@@ -692,7 +692,7 @@ var AIRTIME = (function(AIRTIME){
 		$pl.on("blur", "span.spl_main_fade_in", function(event){
 	        event.stopPropagation();
 
-		    var url = baseUrl+"Playlist/set-playlist-fades",
+		    var url = BaseDir+"Playlist/set-playlist-fades",
 			    span = $(this),
 			    fadeIn = $.trim(span.text()), 
 			    lastMod = getModified(),
@@ -716,7 +716,7 @@ var AIRTIME = (function(AIRTIME){
 		$pl.on("blur", "span.spl_main_fade_out", function(event){
 	        event.stopPropagation();
 
-		    var url = baseUrl+"Playlist/set-playlist-fades",
+		    var url = BaseDir+"Playlist/set-playlist-fades",
 		    	span = $(this),
 		    	fadeOut = $.trim(span.text()), 
 		    	lastMod = getModified(),
@@ -765,7 +765,7 @@ var AIRTIME = (function(AIRTIME){
 
 	    $pl.on("click", 'button[id="playlist_shuffle_button"]', function(){
 	        obj_id = $('input[id="obj_id"]').val();
-	        url = baseUrl+"Playlist/shuffle";
+	        url = BaseDir+"Playlist/shuffle";
     	    enableLoadingIcon();
     	    $.post(url, {format: "json", obj_id: obj_id}, function(json){
 
@@ -797,7 +797,7 @@ var AIRTIME = (function(AIRTIME){
             //hide any previous errors (if any)
             $("#side_playlist .errors").empty().hide();
         
-            var url = baseUrl+'Webstream/save';
+            var url = BaseDir+'Webstream/save';
             $.post(url, 
                 {format: "json", id:id, description: description, url:streamurl, length: length, name: name}, 
                 function(json){
@@ -838,7 +838,7 @@ var AIRTIME = (function(AIRTIME){
         $lib.on("click", "#pl_edit", function() {
             openPlaylistPanel();
             $.ajax( {
-                url : baseUrl+"usersettings/set-library-screen-settings",
+                url : BaseDir+"usersettings/set-library-screen-settings",
                 type : "POST",
                 data : {
                     settings : {
@@ -856,7 +856,7 @@ var AIRTIME = (function(AIRTIME){
             $lib.width(screenWidth).find("#library_display_length").append($togglePl.show());
 
             $.ajax( {
-                url : baseUrl+"usersettings/set-library-screen-settings",
+                url : BaseDir+"usersettings/set-library-screen-settings",
                 type : "POST",
                 data : {
                     settings : {
@@ -875,7 +875,7 @@ var AIRTIME = (function(AIRTIME){
             var criteria = $('form').serializeArray(),
                 block_name = $('#playlist_name_display').text(),
                 block_desc = $('textarea[name="description"]').val(),
-                save_action = baseUrl+'Playlist/save',
+                save_action = BaseDir+'Playlist/save',
                 obj_id = $('input[id="obj_id"]').val(),
                 obj_type = $('#obj_type').val(),
                 lastMod = getModified(),
@@ -906,7 +906,7 @@ var AIRTIME = (function(AIRTIME){
         });
 
         $("#pl-bl-clear-content").live("click", function(event) {
-            var sUrl = baseUrl+"playlist/empty-content",
+            var sUrl = BaseDir+"playlist/empty-content",
                 oData = {};
             playlistRequest(sUrl, oData);
         });
@@ -1005,7 +1005,7 @@ var AIRTIME = (function(AIRTIME){
 	}
 	
 	mod.fnNew = function() {
-		var url = baseUrl+'Playlist/new';
+		var url = BaseDir+'Playlist/new';
 
 		stopAudioPreview();
 		
@@ -1018,7 +1018,7 @@ var AIRTIME = (function(AIRTIME){
 	};
     
 	mod.fnWsNew = function() {
-		var url = baseUrl+'Webstream/new';
+		var url = BaseDir+'Webstream/new';
 
 		stopAudioPreview();
 		
@@ -1032,7 +1032,7 @@ var AIRTIME = (function(AIRTIME){
 	
 
 	mod.fnNewBlock = function() {
-        var url = baseUrl+'Playlist/new';
+        var url = BaseDir+'Playlist/new';
 
         stopAudioPreview();
         
@@ -1065,7 +1065,7 @@ var AIRTIME = (function(AIRTIME){
 		id = (plid === undefined) ? getId() : plid;
 		lastMod = getModified();
 		type = $('#obj_type').val();
-		url = baseUrl+'Playlist/delete';
+		url = BaseDir+'Playlist/delete';
 
 		$.post(url, 
 			{format: "json", ids: id, modified: lastMod, type: type}, 
@@ -1082,7 +1082,7 @@ var AIRTIME = (function(AIRTIME){
 		id = (wsid === undefined) ? getId() : wsid;
 		lastMod = getModified();
 		type = $('#obj_type').val();
-		url = baseUrl+'Webstream/delete';
+		url = BaseDir+'Webstream/delete';
         
 		$.post(url, 
 			{format: "json", ids: id, modified: lastMod, type: type}, 
@@ -1155,20 +1155,20 @@ var AIRTIME = (function(AIRTIME){
 	}
 	
 	mod.fnAddItems = function(aItems, iAfter, sAddType) {
-		var sUrl = baseUrl+"playlist/add-items";
+		var sUrl = BaseDir+"playlist/add-items";
 			oData = {"aItems": aItems, "afterItem": iAfter, "type": sAddType};
 		playlistRequest(sUrl, oData);
 	};
 	
 	mod.fnMoveItems = function(aIds, iAfter) {
-		var sUrl = baseUrl+"playlist/move-items",
+		var sUrl = BaseDir+"playlist/move-items",
 			oData = {"ids": aIds, "afterItem": iAfter};
 		
 		playlistRequest(sUrl, oData);
 	};
 	
 	mod.fnDeleteItems = function(aItems) {
-		var sUrl = baseUrl+"playlist/delete-items",
+		var sUrl = BaseDir+"playlist/delete-items",
 			oData = {"ids": aItems};
 		
 		playlistRequest(sUrl, oData);

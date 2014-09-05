@@ -77,7 +77,7 @@ function closeAddShowForm(event) {
 	$el.hide();
     windowResize();
 
-    $.get(baseUrl+"Schedule/get-form", {format:"json"}, function(json) {
+    $.get(baseDir+"Schedule/get-form", {format:"json"}, function(json) {
     	
     	redrawAddShowForm($el, json.form);
     });
@@ -131,7 +131,7 @@ function autoSelect(event, ui) {
 function findHosts(request, callback) {
 	var search, url;
 
-	url = baseUrl+"User/get-hosts";
+	url = baseDir+"User/get-hosts";
 	search = request.term;
 
 	var noResult = new Array();
@@ -333,7 +333,7 @@ function setAddShowEvents(form) {
             endTimeField = form.find("#add_show_end_time"),
             newTimezone = form.find("#add_show_timezone").val();
 
-        $.post(baseUrl+"Schedule/localize-start-end-time",
+        $.post(baseDir+"Schedule/localize-start-end-time",
                {format: "json",
                 startDate: startDateField.val(),
                 startTime: startTimeField.val(),
@@ -627,7 +627,7 @@ function setAddShowEvents(form) {
 
         var start_date = $("#add_show_start_date").val();
         var end_date = $("#add_show_end_date").val();
-        var action = baseUrl+"Schedule/"+String(addShowButton.attr("data-action"));
+        var action = baseDir+"Schedule/"+String(addShowButton.attr("data-action"));
 
         $.post(action, {format: "json", data: data, hosts: hosts, days: days}, function(json){
             
@@ -649,7 +649,7 @@ function setAddShowEvents(form) {
                 	.fullCalendar('render');
 
                 $addShowForm.hide();
-                $.get(baseUrl+"Schedule/get-form", {format:"json"}, function(json){
+                $.get(baseDir+"Schedule/get-form", {format:"json"}, function(json){
                 	redrawAddShowForm($addShowForm, json.form);
                 });
                 makeAddShowButton();
@@ -760,7 +760,7 @@ function setAddShowEvents(form) {
 		
 		loadingIcon.show();
 		$.post(
-			baseUrl+"Schedule/calculate-duration", 
+			baseDir+"Schedule/calculate-duration", 
 			{startTime: startDateTime, endTime: endDateTime, timezone: timezone}, 
 			function(data) {
 			    $('#add_show_duration').val(JSON.parse(data));

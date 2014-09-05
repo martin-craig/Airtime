@@ -317,7 +317,7 @@ var AIRTIME = (function(AIRTIME) {
     
     mod.fnDeleteItems = function(aMedia) {
        
-        $.post(baseUrl+"library/delete", 
+        $.post(BaseDir+"library/delete", 
             {"format": "json", "media": aMedia}, 
             function(json){
                 if (json.message !== undefined) {
@@ -356,7 +356,7 @@ var AIRTIME = (function(AIRTIME) {
             // on the right side if it was just deleted
             // from the library
             if (closeObj) {
-                $.post(baseUrl+"playlist/close-playlist",
+                $.post(BaseDir+"playlist/close-playlist",
                     {"format": "json", "type": currentObjType},
                     function(json) {
                         $("#side_playlist").empty().append(json.html);
@@ -522,7 +522,7 @@ var AIRTIME = (function(AIRTIME) {
             "fnStateSave": function (oSettings, oData) {
                 localStorage.setItem('datatables-library', JSON.stringify(oData));
                 $.ajax({
-                    url: baseUrl+"usersettings/set-library-datatable",
+                    url: BaseDir+"usersettings/set-library-datatable",
                     type: "POST",
                     data: {settings : oData, format: "json"},
                     dataType: "json"
@@ -569,7 +569,7 @@ var AIRTIME = (function(AIRTIME) {
                 oData.iCreate = parseInt(oData.iCreate, 10);
             },
             
-            "sAjaxSource": baseUrl+"Library/contents-feed",
+            "sAjaxSource": BaseDir+"Library/contents-feed",
             "sAjaxDataProp": "files",
             
             "fnServerData": function ( sSource, aoData, fnCallback ) {
@@ -617,13 +617,13 @@ var AIRTIME = (function(AIRTIME) {
 
                 // add audio preview image/button
                 if (aData.ftype === "audioclip") {
-                    $(nRow).find('td.library_type').html('<img title="'+$.i18n._("Track preview")+'" src="'+baseUrl+'css/images/icon_audioclip.png">');
+                    $(nRow).find('td.library_type').html('<img title="'+$.i18n._("Track preview")+'" src="'+staticBaseDir+'css/images/icon_audioclip.png">');
                 } else if (aData.ftype === "playlist") {
-                    $(nRow).find('td.library_type').html('<img title="'+$.i18n._("Playlist preview")+'" src="'+baseUrl+'css/images/icon_playlist.png">');
+                    $(nRow).find('td.library_type').html('<img title="'+$.i18n._("Playlist preview")+'" src="'+staticBaseDir+'css/images/icon_playlist.png">');
                 } else if (aData.ftype === "block") {
-                    $(nRow).find('td.library_type').html('<img title="'+$.i18n._("Smart Block")+'" src="'+baseUrl+'css/images/icon_smart-block.png">');
+                    $(nRow).find('td.library_type').html('<img title="'+$.i18n._("Smart Block")+'" src="'+staticBaseDir+'css/images/icon_smart-block.png">');
                 } else if (aData.ftype === "stream") {
-                    $(nRow).find('td.library_type').html('<img title="'+$.i18n._("Webstream preview")+'" src="'+baseUrl+'css/images/icon_webstream.png">');
+                    $(nRow).find('td.library_type').html('<img title="'+$.i18n._("Webstream preview")+'" src="'+staticBaseDir+'css/images/icon_webstream.png">');
                 }
 
                 if (aData.is_scheduled) {
@@ -716,7 +716,7 @@ var AIRTIME = (function(AIRTIME) {
                             text: aData.track_title
                         },
                         ajax: {
-                            url: baseUrl+"Library/get-file-metadata",
+                            url: baseDir+"Library/get-file-metadata",
                             type: "get",
                             data: ({format: "html", id : aData.id, type: aData.ftype}),
                             success: function(data, status) {
@@ -924,13 +924,13 @@ var AIRTIME = (function(AIRTIME) {
                             };
                         } else if (data.ftype === "playlist" || data.ftype === "block") {
                             callback = function() {
-		                        var url = baseUrl+'Playlist/edit';
+		                        var url = baseDir+'Playlist/edit';
                                 AIRTIME.playlist.fnEdit(data.id, data.ftype, url);
                                 AIRTIME.playlist.validatePlaylistElements();
                             };
                         } else if (data.ftype === "stream") {
                             callback = function() {
-		                        var url = baseUrl+'Webstream/edit';
+		                        var url = baseDir+'Webstream/edit';
                                 AIRTIME.playlist.fnEdit(data.id, data.ftype, url);
                             }
                         } else {
@@ -1056,7 +1056,7 @@ var AIRTIME = (function(AIRTIME) {
                 }
                 
                 request = $.ajax({
-                  url: baseUrl+"library/context-menu",
+                  url: baseDir+"library/context-menu",
                   type: "GET",
                   data: {id : data.id, type: data.ftype, format: "json", "screen": screen},
                   dataType: "json",
@@ -1098,7 +1098,7 @@ function closeDialogLibrary(event, ui) {
 }
 
 function checkImportStatus() {
-    $.getJSON(baseUrl+'Preference/is-import-in-progress', function(data){
+    $.getJSON(baseDir+'Preference/is-import-in-progress', function(data){
         var $div = $('#import_status');
         var table = $('#library_display').dataTable();
         if (data == true){
@@ -1131,7 +1131,7 @@ function addProgressIcon(id) {
 }
     
 function checkLibrarySCUploadStatus(){
-    var url = baseUrl+'Library/get-upload-to-soundcloud-status',
+    var url = baseDir+'Library/get-upload-to-soundcloud-status',
         span,
         id;
     
@@ -1216,7 +1216,7 @@ function addQtipToSCIcons() {
                 content: {
                     text: $.i18n._("Retreiving data from the server..."),
                     ajax: {
-                        url: baseUrl+"Library/get-upload-to-soundcloud-status",
+                        url: baseDir+"Library/get-upload-to-soundcloud-status",
                         type: "post",
                         data: ({format: "json", id : id, type: "file"}),
                         success: function(json, status){
@@ -1402,7 +1402,7 @@ $(document).ready(function() {
     $('#editmdsave').live("click", function() {
         var file_id = $('#file_id').val(),
             data = $("#edit-md-dialog form").serializeArray();
-        $.post(baseUrl+'library/edit-file-md', {format: "json", id: file_id, data: data}, function() {
+        $.post(baseDir+'library/edit-file-md', {format: "json", id: file_id, data: data}, function() {
             $("#edit-md-dialog").dialog().remove();
 
             // don't redraw the library table if we are on calendar page

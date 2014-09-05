@@ -640,8 +640,6 @@ SQL;
 
     public static function searchLibraryFiles($datatables)
     {
-        $baseUrl = Application_Common_OsPath::getBaseDir();
-
         $con = Propel::getConnection(CcFilesPeer::DATABASE_NAME);
 
         $displayColumns = self::getLibraryColumns();

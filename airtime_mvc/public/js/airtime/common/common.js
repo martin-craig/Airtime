@@ -100,7 +100,7 @@ function open_audio_preview(type, id, audioFileTitle, audioFileArtist) {
     // The reason that we need to encode artist and title string is that
     // sometime they contain '/' or '\' and apache reject %2f or %5f
     // so the work around is to encode it twice.
-    openPreviewWindow(baseUrl+'audiopreview/audio-preview/audioFileID/'+id+'/audioFileArtist/'+encodeURIComponent(encodeURIComponent(audioFileArtist))+'/audioFileTitle/'+encodeURIComponent(encodeURIComponent(audioFileTitle))+'/type/'+type);
+    openPreviewWindow(baseDir+'audiopreview/audio-preview/audioFileID/'+id+'/audioFileArtist/'+encodeURIComponent(encodeURIComponent(audioFileArtist))+'/audioFileTitle/'+encodeURIComponent(encodeURIComponent(audioFileTitle))+'/type/'+type);
     _preview_window.focus();
 }
 
@@ -118,7 +118,7 @@ function open_playlist_preview(p_playlistID, p_playlistIndex) {
     if (_preview_window != null && !_preview_window.closed)
         _preview_window.playAllPlaylist(p_playlistID, p_playlistIndex);
     else
-        openPreviewWindow(baseUrl+'audiopreview/playlist-preview/playlistIndex/'+p_playlistIndex+'/playlistID/'+p_playlistID);
+        openPreviewWindow(baseDir+'audiopreview/playlist-preview/playlistIndex/'+p_playlistIndex+'/playlistID/'+p_playlistID);
     _preview_window.focus();
 }
 
@@ -129,7 +129,7 @@ function open_block_preview(p_blockId, p_blockIndex) {
     if (_preview_window != null && !_preview_window.closed)
         _preview_window.playBlock(p_blockId, p_blockIndex);
     else
-        openPreviewWindow(baseUrl+'audiopreview/block-preview/blockIndex/'+p_blockIndex+'/blockId/'+p_blockId);
+        openPreviewWindow(baseDir+'audiopreview/block-preview/blockIndex/'+p_blockIndex+'/blockId/'+p_blockId);
     _preview_window.focus();
 }
 
@@ -143,7 +143,7 @@ function open_show_preview(p_showID, p_showIndex) {
     if (_preview_window != null && !_preview_window.closed)
         _preview_window.playAllShow(p_showID, p_showIndex);
     else 
-        openPreviewWindow(baseUrl+'audiopreview/show-preview/showID/'+p_showID+'/showIndex/'+p_showIndex);
+        openPreviewWindow(baseDir+'audiopreview/show-preview/showID/'+p_showID+'/showIndex/'+p_showIndex);
     _preview_window.focus();
 }
 

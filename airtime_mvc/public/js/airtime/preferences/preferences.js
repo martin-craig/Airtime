@@ -106,7 +106,7 @@ $(document).ready(function() {
     
     $('#pref_save').live('click', function() {
         var data = $('#pref_form').serialize();
-        var url = baseUrl+'Preference/index';
+        var url = baseDir+'Preference/index';
         
         $.post(url, {format: "json", data: data}, function(json){
             $('#content').empty().append(json.html);

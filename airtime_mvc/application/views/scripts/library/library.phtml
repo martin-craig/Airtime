@@ -1,7 +1,9 @@
-<?php $baseUrl = Application_Common_OsPath::getBaseDir(); ?>
+<?php
+$CC_CONFIG = Config::getConfig();
+$staticBaseDir = $CC_CONFIG['staticBaseDir']; ?>
 <div id="import_status" class="library_import" style="display:none">
 	<?php echo _("File import in progress..."); ?>
-	<img src=<?php echo $baseUrl . "css/images/file_import_loader.gif"?>></img>
+	<img src=<?php echo $staticBaseDir . "css/images/file_import_loader.gif"?>></img>
 </div>
 
 <fieldset class="toggle closed" id="filter_options">

@@ -26,9 +26,9 @@ class LoginController extends Zend_Controller_Action
 
         $error = false;
         
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
 
-        $this->view->headScript()->appendFile($baseUrl.'js/airtime/login/login.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/login/login.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 
         $form = new Application_Form_Login();
 
@@ -103,9 +103,9 @@ class LoginController extends Zend_Controller_Action
     {
         $CC_CONFIG = Config::getConfig();
 
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
         
-        $this->view->headScript()->appendFile($baseUrl.'js/airtime/login/password-restore.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/login/password-restore.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 
         $request = $this->getRequest();
         Application_Model_Locale::configureLocalization($request->getcookie('airtime_locale', 'en_CA'));

@@ -95,7 +95,7 @@ var AIRTIME = (function(AIRTIME){
         // once a track plays out we need to check if we can update
         // the is_scheduled flag in cc_files
         if (schedId > 0) {
-            $.post(baseUrl+"schedule/update-future-is-scheduled", 
+            $.post(baseDir+"schedule/update-future-is-scheduled", 
                     {"format": "json", "schedId": schedId}, function(data) {
                         if (data.redrawLibTable !== undefined && data.redrawLibTable) {
                             $("#library_content").find("#library_display").dataTable().fnStandingRedraw();
@@ -311,7 +311,7 @@ var AIRTIME = (function(AIRTIME){
     mod.fnAdd = function(aMediaIds, aSchedIds) {
         mod.disableUI();
         
-        $.post(baseUrl+"showbuilder/schedule-add", 
+        $.post(baseDir+"showbuilder/schedule-add", 
             {"format": "json", "mediaIds": aMediaIds, "schedIds": aSchedIds}, 
             mod.fnItemCallback
         );
@@ -321,7 +321,7 @@ var AIRTIME = (function(AIRTIME){
         
         mod.disableUI();
         
-        $.post(baseUrl+"showbuilder/schedule-move", 
+        $.post(baseDir+"showbuilder/schedule-move", 
             {"format": "json", "selectedItem": aSelect, "afterItem": aAfter},  
             mod.fnItemCallback
         );
@@ -331,7 +331,7 @@ var AIRTIME = (function(AIRTIME){
         
         mod.disableUI();
         if (confirm($.i18n._("Delete selected item(s)?"))) {
-	        $.post( baseUrl+"showbuilder/schedule-remove",
+	        $.post( baseDir+"showbuilder/schedule-remove",
 	            {"items": aItems, "format": "json"},
 	            mod.fnItemCallback
 	        );
@@ -441,7 +441,7 @@ var AIRTIME = (function(AIRTIME){
                 localStorage.setItem('datatables-timeline', JSON.stringify(oData));
                 
                 $.ajax({
-                  url: baseUrl+"usersettings/set-timeline-datatable",
+                  url: baseDir+"usersettings/set-timeline-datatable",
                   type: "POST",
                   data: {settings : oData, format: "json"},
                   dataType: "json"
@@ -603,7 +603,7 @@ var AIRTIME = (function(AIRTIME){
                         if (!isAudioSupported(aData.mime)) {
                             $image.html('<span class="ui-icon ui-icon-locked"></span>');
                         } else {
-                            $image.html('<img title="'+$.i18n._("Track preview")+'" src="'+baseUrl+'css/images/icon_audioclip.png"></img>')
+                            $image.html('<img title="'+$.i18n._("Track preview")+'" src="'+staticBaseDir+'css/images/icon_audioclip.png"></img>')
                             .click(function() {
                                 open_show_preview(aData.instance, aData.pos);
                                 return false;
@@ -842,7 +842,7 @@ var AIRTIME = (function(AIRTIME){
              
             "sAjaxDataProp": "schedule",
             "oLanguage": datatables_dict,
-            "sAjaxSource": baseUrl+"showbuilder/builder-feed"  
+            "sAjaxSource": baseDir+"showbuilder/builder-feed"  
         });
         
         $sbTable.find("tbody").on("click", "input:checkbox", function(ev) {
@@ -1086,7 +1086,7 @@ var AIRTIME = (function(AIRTIME){
                     }
                     
                     if (confirm(msg)) {
-                        var url = baseUrl+"Schedule/cancel-current-show";
+                        var url = baseDir+"Schedule/cancel-current-show";
                         $.ajax({
                             url: url,
                             data: {format: "json", id: data.instance},
@@ -1269,7 +1269,7 @@ var AIRTIME = (function(AIRTIME){
                 }
                 
                 request = $.ajax({
-                  url: baseUrl+"showbuilder/context-menu",
+                  url: baseDir+"showbuilder/context-menu",
                   type: "GET",
                   data: {id : data.id, format: "json"},
                   dataType: "json",

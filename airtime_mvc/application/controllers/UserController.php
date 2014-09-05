@@ -19,7 +19,7 @@ class UserController extends Zend_Controller_Action
         $CC_CONFIG = Config::getConfig();
 
         $request = $this->getRequest();
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
 
         $js_files = array(
             'js/datatables/js/jquery.dataTables.js?',
@@ -29,10 +29,10 @@ class UserController extends Zend_Controller_Action
 
         foreach ($js_files as $js) {
             $this->view->headScript()->appendFile(
-                $baseUrl.$js.$CC_CONFIG['airtime_version'],'text/javascript');
+                $staticBaseDir.$js.$CC_CONFIG['airtime_version'],'text/javascript');
         }
 
-        $this->view->headLink()->appendStylesheet($baseUrl.'css/users.css?'.$CC_CONFIG['airtime_version']);
+        $this->view->headLink()->appendStylesheet($staticBaseDir.'css/users.css?'.$CC_CONFIG['airtime_version']);
 
         $form = new Application_Form_AddUser();
 
