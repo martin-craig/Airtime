@@ -317,7 +317,7 @@ var AIRTIME = (function(AIRTIME) {
     
     mod.fnDeleteItems = function(aMedia) {
        
-        $.post(BaseDir+"library/delete", 
+        $.post(baseDir+"library/delete", 
             {"format": "json", "media": aMedia}, 
             function(json){
                 if (json.message !== undefined) {
@@ -356,7 +356,7 @@ var AIRTIME = (function(AIRTIME) {
             // on the right side if it was just deleted
             // from the library
             if (closeObj) {
-                $.post(BaseDir+"playlist/close-playlist",
+                $.post(baseDir+"playlist/close-playlist",
                     {"format": "json", "type": currentObjType},
                     function(json) {
                         $("#side_playlist").empty().append(json.html);
@@ -522,7 +522,7 @@ var AIRTIME = (function(AIRTIME) {
             "fnStateSave": function (oSettings, oData) {
                 localStorage.setItem('datatables-library', JSON.stringify(oData));
                 $.ajax({
-                    url: BaseDir+"usersettings/set-library-datatable",
+                    url: baseDir+"usersettings/set-library-datatable",
                     type: "POST",
                     data: {settings : oData, format: "json"},
                     dataType: "json"
@@ -569,7 +569,7 @@ var AIRTIME = (function(AIRTIME) {
                 oData.iCreate = parseInt(oData.iCreate, 10);
             },
             
-            "sAjaxSource": BaseDir+"Library/contents-feed",
+            "sAjaxSource": baseDir+"Library/contents-feed",
             "sAjaxDataProp": "files",
             
             "fnServerData": function ( sSource, aoData, fnCallback ) {
