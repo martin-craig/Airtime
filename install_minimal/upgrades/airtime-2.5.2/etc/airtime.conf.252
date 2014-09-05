@@ -7,21 +7,18 @@ dbpass = airtime
 [rabbitmq]
 host = 127.0.0.1
 port = 5672
-user = guest
-password = guest
-vhost = /
+user = airtime
+password = GATXO7JT83DO4CLXLG6O
+vhost = /airtime
 
 [general]
-api_key = AAA
+api_key = 6HIGRC1JRXK7YD9AIRPG
 web_server_user = www-data
-airtime_dir = x
+airtime_dir = /usr/share/airtime
 base_url = localhost
 base_port = 80
-base_dir = /
 static_base_dir = /
-
-;How many hours ahead of time should Airtime playout engine (PYPO)
-;cache scheduled media files.
+base_dir = /
 cache_ahead_hours = 1
 
 [monit]
