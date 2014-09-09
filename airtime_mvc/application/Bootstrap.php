@@ -105,8 +105,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $view->headScript()->appendFile($staticBaseDir.'js/sprintf/sprintf-0.7-beta1.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
         $view->headScript()->appendFile($staticBaseDir.'js/cookie/jquery.cookie.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
         $view->headScript()->appendFile($staticBaseDir.'js/i18n/jquery.i18n.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $view->headScript()->appendFile($staticBaseDir.'locale/general-translation-table?'.$CC_CONFIG['airtime_version'],'text/javascript');
-        $view->headScript()->appendFile($staticBaseDir.'locale/datatables-translation-table?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $view->headScript()->appendFile($baseDir.'locale/general-translation-table?'.$CC_CONFIG['airtime_version'],'text/javascript');
+        $view->headScript()->appendFile($baseDir.'locale/datatables-translation-table?'.$CC_CONFIG['airtime_version'],'text/javascript');
         $view->headScript()->appendScript("$.i18n.setDictionary(general_dict)");
         $view->headScript()->appendScript("var baseDir='$baseDir'");
         $view->headScript()->appendScript("var staticBaseDir='$staticBaseDir'");
