@@ -28,7 +28,7 @@ class LibraryController extends Zend_Controller_Action
         $CC_CONFIG = Config::getConfig();
 
         $request = $this->getRequest();
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $this->view->headScript()->appendFile($staticBaseDir.'js/blockui/jquery.blockUI.js?'.$CC_CONFIG['airtime_version'], 'text/javascript');
         $this->view->headScript()->appendFile($staticBaseDir.'js/contextmenu/jquery.contextMenu.js?'.$CC_CONFIG['airtime_version'], 'text/javascript');

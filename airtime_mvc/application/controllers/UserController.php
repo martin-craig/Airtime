@@ -19,7 +19,7 @@ class UserController extends Zend_Controller_Action
         $CC_CONFIG = Config::getConfig();
 
         $request = $this->getRequest();
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $js_files = array(
             'js/datatables/js/jquery.dataTables.js?',

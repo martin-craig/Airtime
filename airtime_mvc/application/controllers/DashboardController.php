@@ -94,7 +94,7 @@ class DashboardController extends Zend_Controller_Action
     {
         $CC_CONFIG = Config::getConfig();
 
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $this->view->headLink()->appendStylesheet($staticBaseDir.'js/jplayer/skin/jplayer.blue.monday.css?'.$CC_CONFIG['airtime_version']);
         $this->_helper->layout->setLayout('livestream');

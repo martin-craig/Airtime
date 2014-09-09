@@ -27,7 +27,7 @@ class AudiopreviewController extends Zend_Controller_Action
         $type = $this->_getParam('type');
 
         $baseDir = Application_Common_OsPath::getBaseDir();
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $this->view->headScript()->appendFile(
             $staticBaseDir.'js/airtime/audiopreview/preview_jplayer.js?'.$CC_CONFIG['airtime_version'],
@@ -81,7 +81,7 @@ class AudiopreviewController extends Zend_Controller_Action
         $playlistIndex = $this->_getParam('playlistIndex');
         $playlistID = $this->_getParam('playlistID');
 
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/audiopreview/preview_jplayer.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
         $this->view->headScript()->appendFile($staticBaseDir.'js/jplayer/jplayer.playlist.min.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
@@ -107,7 +107,7 @@ class AudiopreviewController extends Zend_Controller_Action
         $blockIndex = $this->_getParam('blockIndex');
         $blockId = $this->_getParam('blockId');
 
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/audiopreview/preview_jplayer.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
         $this->view->headScript()->appendFile($staticBaseDir.'js/jplayer/jplayer.playlist.min.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
@@ -234,7 +234,7 @@ class AudiopreviewController extends Zend_Controller_Action
         $showID = $this->_getParam('showID');
         $showIndex = $this->_getParam('showIndex');
 
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/audiopreview/preview_jplayer.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
         $this->view->headScript()->appendFile($staticBaseDir.'js/jplayer/jplayer.playlist.min.js?'.$CC_CONFIG['airtime_version'],'text/javascript');

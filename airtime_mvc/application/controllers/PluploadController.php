@@ -15,7 +15,7 @@ class PluploadController extends Zend_Controller_Action
     {
         $CC_CONFIG = Config::getConfig();
 
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
         $locale = Application_Model_Preference::GetLocale();
 
         $this->view->headScript()->appendFile($staticBaseDir.'js/plupload/plupload.full.min.js?'.$CC_CONFIG['airtime_version'],'text/javascript');

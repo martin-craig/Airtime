@@ -45,7 +45,7 @@ class ScheduleController extends Zend_Controller_Action
     {
         $CC_CONFIG = Config::getConfig();
 
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $this->view->headScript()->appendScript(
             "var calendarPref = {};\n".

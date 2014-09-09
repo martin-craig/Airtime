@@ -22,7 +22,7 @@ class ShowbuilderController extends Zend_Controller_Action
 
         $request = $this->getRequest();
 
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $user = Application_Model_User::GetCurrentUser();
         $userType = $user->getType();

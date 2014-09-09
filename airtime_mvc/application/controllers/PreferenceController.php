@@ -26,7 +26,7 @@ class PreferenceController extends Zend_Controller_Action
         
         $isSaas = Application_Model_Preference::GetPlanLevel() == 'disabled'?false:true;
         
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/preferences/preferences.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
         $this->view->statusMsg = "";
@@ -88,7 +88,7 @@ class PreferenceController extends Zend_Controller_Action
 
         $request = $this->getRequest();
 
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/preferences/support-setting.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
         $this->view->statusMsg = "";
@@ -142,7 +142,7 @@ class PreferenceController extends Zend_Controller_Action
     {
         $CC_CONFIG = Config::getConfig();
 
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $this->view->headScript()->appendFile($staticBaseDir.'js/serverbrowse/serverbrowser.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
         $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/preferences/musicdirs.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
@@ -157,7 +157,7 @@ class PreferenceController extends Zend_Controller_Action
 
         $request = $this->getRequest();
 
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/preferences/streamsetting.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 

@@ -1,6 +1,6 @@
 <?php
 $CC_CONFIG = Config::getConfig();
-$staticBaseDir = $CC_CONFIG['staticBaseDir']; ?>
+$staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']); ?>
 <div id="import_status" class="library_import" style="display:none">
 	<?php echo _("File import in progress..."); ?>
 	<img src=<?php echo $staticBaseDir . "css/images/file_import_loader.gif"?>></img>

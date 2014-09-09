@@ -65,7 +65,7 @@ class PlayouthistoryController extends Zend_Controller_Action
     public function indexAction()
     {
         $CC_CONFIG = Config::getConfig();
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         list($startsDT, $endsDT) = $this->getStartEnd();
         

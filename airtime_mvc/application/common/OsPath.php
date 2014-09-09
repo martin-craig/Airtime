@@ -64,20 +64,22 @@ class Application_Common_OsPath{
         return join(DIRECTORY_SEPARATOR, $paths);
     }
     
-    public static function getBaseDir() {
-        
+    public static function getBaseDir()
+    {
         $CC_CONFIG = Config::getConfig();
-        $baseUrl = $CC_CONFIG['baseDir'];
-        
-        if ($baseUrl[0] != "/") {
-            $baseUrl = "/".$baseUrl;
+        return self::formatDirectoryWithDirectorySeparators($CC_CONFIG['baseDir']);
+    }
+    
+    public static function formatDirectoryWithDirectorySeparators($dir)
+    {
+        if ($dir[0] != "/") {
+            $dir = "/".$dir;
         }
 
-        if ($baseUrl[strlen($baseUrl) -1] != "/") {
-            $baseUrl = $baseUrl."/";
+        if ($dir[strlen($dir) -1] != "/") {
+            $dir = $dir."/";
         }
         
-        
-        return $baseUrl;
+        return $dir;
     }
 }

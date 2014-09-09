@@ -16,7 +16,7 @@ class PlayouthistorytemplateController extends Zend_Controller_Action
 	public function indexAction()
 	{
 		$CC_CONFIG = Config::getConfig();
-		$staticBaseDir = $CC_CONFIG['staticBaseDir'];
+		$staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 	
 		$this->view->headScript()->appendFile($staticBaseDir.'js/airtime/playouthistory/template.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 		$this->view->headLink()->appendStylesheet($staticBaseDir.'css/history_styles.css?'.$CC_CONFIG['airtime_version']);
@@ -30,7 +30,7 @@ class PlayouthistorytemplateController extends Zend_Controller_Action
 	public function configureTemplateAction() {
 	
 		$CC_CONFIG = Config::getConfig();
-		$staticBaseDir = $CC_CONFIG['staticBaseDir'];
+		$staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 	
 		$this->view->headScript()->appendFile($staticBaseDir.'js/airtime/playouthistory/configuretemplate.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 		$this->view->headLink()->appendStylesheet($staticBaseDir.'css/history_styles.css?'.$CC_CONFIG['airtime_version']);

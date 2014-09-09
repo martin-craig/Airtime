@@ -26,7 +26,7 @@ class LoginController extends Zend_Controller_Action
 
         $error = false;
         
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/login/login.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 
@@ -103,7 +103,7 @@ class LoginController extends Zend_Controller_Action
     {
         $CC_CONFIG = Config::getConfig();
 
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
         
         $this->view->headScript()->appendFile($staticBaseDir.'js/airtime/login/password-restore.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 

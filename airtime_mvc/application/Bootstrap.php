@@ -51,8 +51,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $CC_CONFIG = Config::getConfig();
         
         $view = $this->getResource('view');
-        $baseDir = Application_Common_OsPath::getBaseDir();
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $baseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['baseDir']);
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $view->headScript()->appendScript("var baseDir = '$baseDir'");
         $view->headScript()->appendScript("var staticBaseDir = '$staticBaseDir'");
@@ -73,7 +73,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
         $view = $this->getResource('view');
 
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $view->headLink()->appendStylesheet($staticBaseDir.'css/bootstrap.css?'.$CC_CONFIG['airtime_version']);
         $view->headLink()->appendStylesheet($staticBaseDir.'css/redmond/jquery-ui-1.8.8.custom.css?'.$CC_CONFIG['airtime_version']);
@@ -90,8 +90,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
         $view = $this->getResource('view');
 
-        $baseDir = Application_Common_OsPath::getBaseDir();
-        $staticBaseDir = $CC_CONFIG['staticBaseDir'];
+        $baseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['baseDir']);
+        $staticBaseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['staticBaseDir']);
 
         $view->headScript()->appendFile($staticBaseDir.'js/libs/jquery-1.8.3.min.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
         $view->headScript()->appendFile($staticBaseDir.'js/libs/jquery-ui-1.8.24.min.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
