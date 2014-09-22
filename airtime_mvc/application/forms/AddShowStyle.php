@@ -1,5 +1,7 @@
 <?php
 
+require_once 'customfilters/ImageSize.php';
+
 class Application_Form_AddShowStyle extends Zend_Form_SubForm
 {
 
@@ -24,7 +26,7 @@ class Application_Form_AddShowStyle extends Zend_Form_SubForm
             'Hex', $stringLengthValidator
         ));
 
-    // Add show color input
+    	// Add show color input
         $this->addElement('text', 'add_show_color', array(
             'label'      => _('Text Colour:'),
             'class'      => 'input_text',
@@ -74,6 +76,7 @@ class Application_Form_AddShowStyle extends Zend_Form_SubForm
         				'class'		 => 'big',
         	   			'placement'  => false
         		))));
+
         	   
         $this->addElement($upload);
         

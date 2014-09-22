@@ -34,7 +34,6 @@ class Rest_Bootstrap extends Zend_Application_Module_Bootstrap
             )
         );
         $router->addRoute('clear', $clearLibraryRoute);
-
         
         /** ShowController Routes **/
         $uploadImageRoute = new Zend_Controller_Router_Route(

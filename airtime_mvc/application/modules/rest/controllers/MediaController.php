@@ -21,7 +21,10 @@ class Rest_MediaController extends Zend_Rest_Controller
     public function init()
     {
         $this->view->layout()->disableLayout();
+<<<<<<< HEAD
 
+=======
+>>>>>>> duncan/saas
 		// Remove reliance on .phtml files to render requests
    		$this->_helper->viewRenderer->setNoRender(true);
     }
@@ -449,6 +452,7 @@ class Rest_MediaController extends Zend_Rest_Controller
                  $callbackUrl, $apiKey);
     }
     
+<<<<<<< HEAD
     /**
      * This function is here until an image-specific Rest Controller is set up
      */
@@ -488,6 +492,8 @@ class Rest_MediaController extends Zend_Rest_Controller
  			   	null, $apiKey);
     }
 
+=======
+>>>>>>> duncan/saas
     private function getOwnerId()
     {
         try {

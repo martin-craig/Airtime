@@ -1,5 +1,8 @@
 <?php
 
+$filepath = realpath (dirname(__FILE__));
+require_once($filepath."/../modules/rest/controllers/MediaController.php");
+
 class ScheduleController extends Zend_Controller_Action
 {
 
@@ -481,7 +484,7 @@ class ScheduleController extends Zend_Controller_Action
 
             $this->view->addNewShow = true;
             $this->view->newForm = $this->view->render('schedule/add-show-form.phtml');
-        } else {
+                } else {
             if (!$validateStartDate) {
                 $this->view->when->getElement('add_show_start_date')->setOptions(array('disabled' => true));
             }
@@ -544,9 +547,6 @@ class ScheduleController extends Zend_Controller_Action
                 $this->view->when->getElement('add_show_start_time')->setOptions(array('disabled' => true));
             }
             //$this->view->rr->getElement('add_show_record')->setOptions(array('disabled' => true));
-
-            // re-add the upload element
-            $forms["style"]->addElement($upload);
             
             $this->view->addNewShow = false;
             $this->view->action = "edit-show";
@@ -557,7 +557,6 @@ class ScheduleController extends Zend_Controller_Action
     public function addShowAction()
     {
         $service_showForm = new Application_Service_ShowFormService(null);
-        //$service_show = new Application_Service_ShowService();
         
         $js = $this->_getParam('data');
         $data = array();
@@ -583,7 +582,7 @@ class ScheduleController extends Zend_Controller_Action
         $log_vars["params"] = array();
         $log_vars["params"]["form_data"] = $data;
         Logging::info($log_vars);
-
+        
         $forms = $this->createShowFormAction();
         $this->view->addNewShow = true;
         
@@ -594,7 +593,7 @@ class ScheduleController extends Zend_Controller_Action
             //send new show forms to the user
             $this->createShowFormAction(true);
             $this->view->newForm = $this->view->render('schedule/add-show-form.phtml');
-
+            
             Logging::debug("Show creation succeeded");
         } else {
         	$this->view->form = $this->view->render('schedule/add-show-form.phtml');

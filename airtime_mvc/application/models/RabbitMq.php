@@ -129,6 +129,7 @@ class Application_Model_RabbitMq
         
     }
     
+    
     public static function SendMessageToHaproxyConfigDaemon($md){
         $config = parse_ini_file("/etc/airtime-saas/rabbitmq.ini", true);
         $conn = new AMQPConnection($config["rabbitmq"]["host"],
