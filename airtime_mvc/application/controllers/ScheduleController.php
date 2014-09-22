@@ -136,7 +136,7 @@ class ScheduleController extends Zend_Controller_Action
         $editable = $user->isUserType(array(UTYPE_SUPERADMIN, UTYPE_ADMIN, UTYPE_PROGRAM_MANAGER));
 
         $calendar_interval = Application_Model_Preference::GetCalendarTimeScale();
-        Logging::info($calendar_interval);
+        // Logging::info($calendar_interval);
         if ($calendar_interval == "agendaDay") {
             list($start, $end) = Application_Model_Show::getStartEndCurrentDayView();
         } else if ($calendar_interval == "agendaWeek") {
@@ -361,7 +361,7 @@ class ScheduleController extends Zend_Controller_Action
 
             return false;
         }
-
+        
         $originalShowId = $show->isRebroadcast();
         if (!is_null($originalShowId)) {
             try {
@@ -528,13 +528,13 @@ class ScheduleController extends Zend_Controller_Action
 
         list($data, $validateStartDate, $validateStartTime, $originalShowStartDateTime) =
             $service_showForm->preEditShowValidationCheck($data);
-
+        
         if ($service_showForm->validateShowForms($forms, $data, $validateStartDate,
                 $originalShowStartDateTime, true, $data["add_show_instance_id"])) {
-
-            $service_show->addUpdateShow($data);
-
-            $this->view->addNewShow = true;
+            // Get the show ID from the show service to pass as a parameter to the RESTful ShowController
+            $this->view->showId = $service_show->addUpdateShow($data);
+            
+        	$this->view->addNewShow = true;
             $this->view->newForm = $this->view->render('schedule/add-show-form.phtml');
         } else {
             if (!$validateStartDate) {
@@ -544,6 +544,10 @@ class ScheduleController extends Zend_Controller_Action
                 $this->view->when->getElement('add_show_start_time')->setOptions(array('disabled' => true));
             }
             //$this->view->rr->getElement('add_show_record')->setOptions(array('disabled' => true));
+
+            // re-add the upload element
+            $forms["style"]->addElement($upload);
+            
             $this->view->addNewShow = false;
             $this->view->action = "edit-show";
             $this->view->form = $this->view->render('schedule/add-show-form.phtml');
@@ -554,7 +558,7 @@ class ScheduleController extends Zend_Controller_Action
     {
         $service_showForm = new Application_Service_ShowFormService(null);
         //$service_show = new Application_Service_ShowService();
-
+        
         $js = $this->_getParam('data');
         $data = array();
 
@@ -566,9 +570,9 @@ class ScheduleController extends Zend_Controller_Action
         $service_show = new Application_Service_ShowService(null, $data);
 
         // TODO: move this to js
-        $data['add_show_hosts']     = $this->_getParam('hosts');
-        $data['add_show_day_check'] = $this->_getParam('days');
-
+		$data['add_show_hosts']     = $this->_getParam('hosts');
+		$data['add_show_day_check'] = $this->_getParam('days');
+		
         if ($data['add_show_day_check'] == "") {
             $data['add_show_day_check'] = null;
         }
@@ -581,23 +585,23 @@ class ScheduleController extends Zend_Controller_Action
         Logging::info($log_vars);
 
         $forms = $this->createShowFormAction();
-
         $this->view->addNewShow = true;
-
+        
         if ($service_showForm->validateShowForms($forms, $data)) {
-            $service_show->addUpdateShow($data);
-
+        	// Get the show ID from the show service to pass as a parameter to the RESTful ShowController
+        	$this->view->showId = $service_show->addUpdateShow($data);
+            
             //send new show forms to the user
             $this->createShowFormAction(true);
             $this->view->newForm = $this->view->render('schedule/add-show-form.phtml');
 
             Logging::debug("Show creation succeeded");
         } else {
-            $this->view->form = $this->view->render('schedule/add-show-form.phtml');
+        	$this->view->form = $this->view->render('schedule/add-show-form.phtml');
             Logging::debug("Show creation failed");
         }
     }
-
+    
     public function createShowFormAction($populateDefaults=false)
     {
         $service_showForm = new Application_Service_ShowFormService();
@@ -679,7 +683,7 @@ class ScheduleController extends Zend_Controller_Action
 
         $paramsPop = str_replace('#id#', $id, $params);
 
-        // added for downlaod
+        // added for download
         $id = $this->_getParam('id');
 
         $file_id = $this->_getParam('id', null);
@@ -704,7 +708,7 @@ class ScheduleController extends Zend_Controller_Action
         Application_Model_Preference::SetCalendarTimeScale($this->_getParam('timeScale'));
     }
 
-/**
+	/**
      * Sets the user specific preference for which time interval to use in Calendar.
      * This is only being used by schedule.js at the moment.
      */
@@ -750,4 +754,5 @@ class ScheduleController extends Zend_Controller_Action
 
         $this->_helper->json->sendJson($localTime);
     }
+    
 }
