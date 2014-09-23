@@ -409,8 +409,12 @@ class ApiController extends Zend_Controller_Action
             $result['AIRTIME_API_VERSION'] = AIRTIME_API_VERSION;
             header("Content-type: text/javascript");
             
+            if (version_compare(phpversion(), '5.4.0', '<')) {
+                $js = str_replace('\\/', '/', json_encode($result));
+            } else {
+                $js = json_encode($result, JSON_UNESCAPED_SLASHES);
+            }
             // If a callback is not given, then just provide the raw JSON.
-            $js = json_encode($result, JSON_UNESCAPED_SLASHES);
             echo isset($_GET['callback']) ? $_GET['callback'].'('.$js.')' : $js;
         } else {
             header('HTTP/1.0 401 Unauthorized');
@@ -506,9 +510,13 @@ class ApiController extends Zend_Controller_Action
             $result['AIRTIME_API_VERSION'] = AIRTIME_API_VERSION;
             header("Content-type: text/javascript");
             
+    	    if (version_compare(phpversion(), '5.4.0', '<')) {
+                $js = str_replace('\\/', '/', json_encode($result));
+            } else {
+                $js = json_encode($result, JSON_UNESCAPED_SLASHES);
+            }
             // If a callback is not given, then just provide the raw JSON.
-            $js = json_encode($result, JSON_UNESCAPED_SLASHES);
-    		echo isset($_GET['callback']) ? $_GET['callback'].'('.$js.')' : $js;
+            echo isset($_GET['callback']) ? $_GET['callback'].'('.$js.')' : $js;
         } else {
             header('HTTP/1.0 401 Unauthorized');
             print _('You are not allowed to access this resource. ');
