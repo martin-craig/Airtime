@@ -76,9 +76,10 @@ class Application_Form_AddShowStyle extends Zend_Form_SubForm
         				'class'		 => 'big',
         	   			'placement'  => false
         		))));
-
-        	   
-        $this->addElement($upload);
+		// Validation for this element is done on the front-end because it 
+		// doesn't pass Zend validation (since AddShow submits are done through AJAX)
+        
+       	$this->addElement($upload);
         
         // Add image preview
         $this->addElement('image', 'add_show_logo_preview', array(
