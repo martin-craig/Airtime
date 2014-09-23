@@ -285,8 +285,9 @@ class ApiController extends Zend_Controller_Action
             
             // XSS exploit prevention
             $this->convertSpecialChars($result, array("name", "url"));
+            
             // apply user-defined timezone, or default to station
-            $this->applyLiveTimezoneAdjustments(array($result['currentShow'], $result['nextShow']), $timezone, $upcase);
+            $this->applyLiveTimezoneAdjustments($result, $timezone, $upcase);
             
             // convert image paths to point to api endpoints
             $this->findAndConvertPaths($result);
@@ -331,12 +332,18 @@ class ApiController extends Zend_Controller_Action
      */
     private function applyLiveTimezoneAdjustments(&$result, $timezone, $upcase) 
     {
-    	Application_Common_DateHelper::convertTimestampsToTimezone(
-    		$result,
+        // TODO switch this back to just $result to "unbreak" it
+        Application_Common_DateHelper::convertTimestampsToTimezone(
+    		$result["currentShow"],
     		array("starts", "ends", "start_timestamp","end_timestamp"),
     		$timezone
     	);
-
+        Application_Common_DateHelper::convertTimestampsToTimezone(
+            $result["nextShow"],
+            array("starts", "ends", "start_timestamp","end_timestamp"),
+            $timezone
+        );
+        
    		//Convert the UTC scheduler time ("now") to the user-defined timezone.
    		$result["schedulerTime"] = Application_Common_DateHelper::UTCStringToTimezoneString($result["schedulerTime"], $timezone);
    		$result["timezone"] = $upcase ? strtoupper($timezone) : $timezone;
