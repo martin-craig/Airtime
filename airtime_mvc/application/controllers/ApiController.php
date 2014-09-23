@@ -239,6 +239,8 @@ class ApiController extends Zend_Controller_Action
      *        Default is "interval".
      * limit - How many shows to retrieve
      *         Default is "5".
+     * timezone - The timezone to send the times in
+     *            Defaults to the station timezone
      */
     public function liveInfoAction()
     {
