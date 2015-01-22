@@ -146,7 +146,14 @@ class Zend_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract
             // If we have an identity and we're making a RESTful request,
             // we need to check the CSRF token
             if ($request->_action != "get" && $request->getModuleName() == "rest") {
-                $this->verifyCSRFToken($request->getParam("csrf_token"));
+                $tokenValid = $this->verifyCSRFToken($request->getParam("csrf_token"));
+
+                if (!$tokenValid) {
+                    $this->getResponse()
+                         ->setHttpResponseCode(401)
+                         ->appendBody("ERROR: CSRF token mismatch.");
+                    return;
+                }
             }
             
             $userInfo = Zend_Auth::getInstance()->getStorage()->read();
@@ -189,11 +196,7 @@ class Zend_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract
         $current_namespace = new Zend_Session_Namespace('csrf_namespace');
         $observed_csrf_token = $token;
         $expected_csrf_token = $current_namespace->authtoken;
-    
-        $this->getResponse()
-             ->setHttpResponseCode(401)
-             ->appendBody("ERROR: CSRF token mismatch.");
-        
+
         return ($observed_csrf_token == $expected_csrf_token);
     }
     
