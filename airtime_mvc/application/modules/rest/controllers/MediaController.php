@@ -32,11 +32,6 @@ class Rest_MediaController extends Zend_Rest_Controller
     
     public function indexAction()
     {
-        if (!$this->verifyAuth(true, true))
-        {
-            return;
-        }
-        
         $files_array = array();
         foreach (CcFilesQuery::create()->find() as $file)
         {
@@ -56,11 +51,6 @@ class Rest_MediaController extends Zend_Rest_Controller
 
     public function downloadAction()
     {
-        if (!$this->verifyAuth(true, true))
-        {
-            return;
-        }
-
         $id = $this->getId();
         if (!$id) {
             return;
@@ -82,11 +72,6 @@ class Rest_MediaController extends Zend_Rest_Controller
     
     public function getAction()
     {
-        if (!$this->verifyAuth(true, true))
-        {
-            return;
-        }
-        
         $id = $this->getId();
         if (!$id) {
             return;
@@ -105,20 +90,6 @@ class Rest_MediaController extends Zend_Rest_Controller
     
     public function postAction()
     {
-        /*  If the user presents a valid API key, we don't check CSRF tokens.  
-            CSRF tokens are only used for session based authentication.
-        */
-        if(!$this->verifyAPIKey()){
-            if(!$this->verifyCSRFToken($this->_getParam('csrf_token'))){
-                return;
-            }
-        }
-
-        if (!$this->verifyAuth(true, true))
-        {
-            return;
-        }
-
         //If we do get an ID on a POST, then that doesn't make any sense
         //since POST is only for creating.
         if ($id = $this->_getParam('id', false)) {
@@ -179,11 +150,6 @@ class Rest_MediaController extends Zend_Rest_Controller
 
     public function putAction()
     {
-        if (!$this->verifyAuth(true, true))
-        {
-            return;
-        }
-        
         $id = $this->getId();
         if (!$id) {
             return;
@@ -247,11 +213,6 @@ class Rest_MediaController extends Zend_Rest_Controller
 
     public function deleteAction()
     {
-        if (!$this->verifyAuth(true, true))
-        {
-            return;
-        }
-             
         $id = $this->getId();
         if (!$id) {
             return;
@@ -279,66 +240,6 @@ class Rest_MediaController extends Zend_Rest_Controller
             return false;
         } 
         return $id;
-    }
-
-    private function verifyCSRFToken($token){
-        $current_namespace = new Zend_Session_Namespace('csrf_namespace');
-        $observed_csrf_token = $token;
-        $expected_csrf_token = $current_namespace->authtoken;
-
-        return ($observed_csrf_token === $expected_csrf_token);
-    }
-
-    private function verifyAuth($checkApiKey, $checkSession)
-    {
-        //  Session takes precedence over API key for now:
-        if ($checkSession && $this->verifySession()) {
-            //  CSRF token validation only applies to session based authorization.
-            if(!$this->verifyCSRFToken($this->_getParam('csrf_token'))){
-                $resp = $this->getResponse();
-                $resp->setHttpResponseCode(401);
-                $resp->appendBody("ERROR: Token Mismatch."); 
-                return false;
-            }
-            return true;
-        }
-        
-        if ($checkApiKey && $this->verifyAPIKey())
-        {
-            return true;
-        }
-        
-        $resp = $this->getResponse();
-        $resp->setHttpResponseCode(401);
-        $resp->appendBody("ERROR: Incorrect API key.");
-               
-        return false;
-    }
-    
-    private function verifyAPIKey()
-    {
-        //The API key is passed in via HTTP "basic authentication":
-        // http://en.wikipedia.org/wiki/Basic_access_authentication
-
-        $CC_CONFIG = Config::getConfig();
-
-        //Decode the API key that was passed to us in the HTTP request.
-        $authHeader = $this->getRequest()->getHeader("Authorization");
-        $encodedRequestApiKey = substr($authHeader, strlen("Basic "));
-        $encodedStoredApiKey = base64_encode($CC_CONFIG["apiKey"][0] . ":");
-        
-        return ($encodedRequestApiKey === $encodedStoredApiKey);
-    }
-    
-    private function verifySession()
-    {
-        $auth = Zend_Auth::getInstance();
-        return ($auth->hasIdentity());
-        
-        //Token checking stub code. We'd need to change LoginController.php to generate a token too, but
-        //but luckily all the token code already exists and works.
-        //$auth = new Application_Model_Auth();
-        //$auth->checkToken(Application_Model_Preference::getUserId(), $token);
     }
 
     private function fileNotFoundResponse()
