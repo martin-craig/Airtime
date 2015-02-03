@@ -32,12 +32,17 @@ def append_title(m) =
     #and bug file with Liquidsoap.
     m
   else
-      if !stream_metadata_type == 1 then
-        [("title", "#{!show_name} - #{m['artist']} - #{m['title']}"), ("mapped", "true")]
-      elsif !stream_metadata_type == 2 then
-        [("title", "#{!station_name} - #{!show_name}"), ("mapped", "true")]
-      else
-        [("title", "#{m['artist']} - #{m['title']}"), ("mapped", "true")]
+    if !stream_metadata_type == 1 then 
+        [("title", "#{!show_name} - #{m['title']}"),("artist", "#{m['artist']}"), ("mapped", "true")]
+
+     elsif !stream_metadata_type == 2 then
+  
+       [("title","#{m['title']}-#{!station_name} - #{!show_name}"),("artist", "#{m['artist']}"), ("mapped", "true")]
+
+    else
+
+      [("title", " #{m['title']}"),("artist", "#{m['artist']}"),("album", "#{m['album']}"),("year", "#{m['year']}"),("comment", "#{m['comment']}"), ("mapped", "true")]
+        
       end
   end
 end
