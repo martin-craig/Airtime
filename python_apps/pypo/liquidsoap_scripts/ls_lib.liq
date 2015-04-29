@@ -31,19 +31,35 @@ def append_title(m) =
     #protection against applying this function twice. It shouldn't be happening
     #and bug file with Liquidsoap.
     m
-  else
-    if !stream_metadata_type == 1 then 
-        [("title", "#{!show_name} - #{m['title']}"),("artist", "#{m['artist']}"), ("mapped", "true")]
-
-     elsif !stream_metadata_type == 2 then
-  
-       [("title","#{m['title']}-#{!station_name} - #{!show_name}"),("artist", "#{m['artist']}"), ("mapped", "true")]
-
-    else
-
-      [("title", " #{m['title']}"),("artist", "#{m['artist']}"),("album", "#{m['album']}"),("year", "#{m['year']}"),("comment", "#{m['comment']}"), ("mapped", "true")]
+ else
+  #Live Habour
+    if !stream_metadata_type == 1 then
+    #  [("title", "#{!show_name} - #{m['artist']} - #{m['title']}"), ("mapped", "true")]
+      
+      
+ #This is how it should look
+  # I want the album and the Year
+ [("title", " #{m['title']}"),("artist", "#{m['artist']}"),("album", "#{m['album']}"),("year", "#{m['year']}"),("comment", "#{m['comment']}"),("show_name", "#{!show_name}"),("station_name", "#{!station_name}"), ("mapped", "true")]      
+      
+      
+      # Schedule
+      elsif !stream_metadata_type == 2 then
+        # [("title", "#{!station_name} - #{!show_name}"), ("mapped", "true")]
         
-      end
+  # I want the album and the Year
+ [("title", " #{m['title']}"),("artist", "#{m['artist']}"),("album", "#{m['album']}"),("year", "#{m['year']}"),("comment", "#{m['comment']}"),("show_name", "#{!show_name}"),("station_name", "#{!station_name}"), ("mapped", "true")]        
+     
+     
+      else
+      
+       # aNYTHING ELSE AUTODJ AND ALL
+      #  [("title", "#{m['artist']} - #{m['title']}"), ("mapped", "true")]
+        
+  # I want the album and the Year
+ [("title", " #{m['title']}"),("artist", "#{m['artist']}"),("album", "#{m['album']}"),("year", "#{m['year']}"),("comment", "#{m['comment']}"),("show_name", "#{!show_name}"),("station_name", "#{!station_name}"), ("mapped", "true")]            
+        
+      end   
+
   end
 end
 
