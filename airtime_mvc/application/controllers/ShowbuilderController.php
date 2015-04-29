@@ -230,29 +230,23 @@ class ShowbuilderController extends Zend_Controller_Action
         $end_time = $end->format("Y-m-d H:i:s");
 
         $this->view->title = "{$show_name}:    {$start_time} - {$end_time}";
-        $this->view->start = $instance->getDbStarts("U");
-        $this->view->end = $instance->getDbEnds("U");
+        $this->view->start = $start_time;
+        $this->view->end = $end_time;
 
         $this->view->dialog = $this->view->render('showbuilder/builderDialog.phtml');
     }
-
+    
     public function checkBuilderFeedAction()
     {
-        $request      = $this->getRequest();
-        $current_time = time();
-
-        $starts_epoch = $request->getParam("start", $current_time);
-        //default ends is 24 hours after starts.
-        $ends_epoch  = $request->getParam("end", $current_time + (60*60*24));
+        $request = $this->getRequest();
         $show_filter = intval($request->getParam("showFilter", 0));
-        $my_shows    = intval($request->getParam("myShows", 0));
-        $timestamp   = intval($request->getParam("timestamp", -1));
-        $instances   = $request->getParam("instances", array());
+        $my_shows = intval($request->getParam("myShows", 0));
+        $timestamp = intval($request->getParam("timestamp", -1));
+        $instances = $request->getParam("instances", array());
 
-        $startsDT = DateTime::createFromFormat("U", $starts_epoch, new DateTimeZone("UTC"));
-        $endsDT   = DateTime::createFromFormat("U", $ends_epoch, new DateTimeZone("UTC"));
+        list($startsDT, $endsDT) = Application_Common_HTTPHelper::getStartEndFromRequest($request);
 
-        $opts        = array("myShows" => $my_shows, "showFilter" => $show_filter);
+        $opts = array("myShows" => $my_shows, "showFilter" => $show_filter);
         $showBuilder = new Application_Model_ShowBuilder($startsDT, $endsDT, $opts);
 
         //only send the schedule back if updates have been made.
@@ -263,18 +257,14 @@ class ShowbuilderController extends Zend_Controller_Action
 
     public function builderFeedAction()
     {
-        $request      = $this->getRequest();
-        $current_time = time();
-
-        $starts_epoch = $request->getParam("start", $current_time);
-        //default ends is 24 hours after starts.
-        $ends_epoch  = $request->getParam("end", $current_time + (60*60*24));
+    	$current_time = time();
+    	
+        $request = $this->getRequest();
         $show_filter = intval($request->getParam("showFilter", 0));
         $show_instance_filter = intval($request->getParam("showInstanceFilter", 0));
-        $my_shows    = intval($request->getParam("myShows", 0));
+        $my_shows = intval($request->getParam("myShows", 0));
 
-        $startsDT = DateTime::createFromFormat("U", $starts_epoch, new DateTimeZone("UTC"));
-        $endsDT   = DateTime::createFromFormat("U", $ends_epoch, new DateTimeZone("UTC"));
+        list($startsDT, $endsDT) = Application_Common_HTTPHelper::getStartEndFromRequest($request);
 
         $opts = array("myShows" => $my_shows,
                 "showFilter" => $show_filter,

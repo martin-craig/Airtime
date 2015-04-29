@@ -136,7 +136,6 @@ class ScheduleController extends Zend_Controller_Action
         $editable = $user->isUserType(array(UTYPE_ADMIN, UTYPE_PROGRAM_MANAGER));
 
         $calendar_interval = Application_Model_Preference::GetCalendarTimeScale();
-        Logging::info($calendar_interval);
         if ($calendar_interval == "agendaDay") {
             list($start, $end) = Application_Model_Show::getStartEndCurrentDayView();
         } else if ($calendar_interval == "agendaWeek") {
@@ -261,7 +260,7 @@ class ScheduleController extends Zend_Controller_Action
 
     public function getCurrentPlaylistAction()
     {
-        $range = Application_Model_Schedule::GetPlayOrderRange();
+        $range = Application_Model_Schedule::GetPlayOrderRangeOld();
         $show = Application_Model_Show::getCurrentShow();
 
         /* Convert all UTC times to localtime before sending back to user. */

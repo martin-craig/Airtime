@@ -162,6 +162,13 @@ class Application_Form_AddShowWhen extends Zend_Form_SubForm
         }
         
 
+        /* We need to know the show duration broken down into hours and minutes
+         * They are used for checking overlapping shows and for validating
+         * rebroadcast instances
+         */
+        $hours = $duration->format("%h");
+        $minutes = $duration->format("%i");
+
         /* Check if show is overlapping
          * We will only do this check if the show is valid
          * upto this point
@@ -202,8 +209,12 @@ class Application_Form_AddShowWhen extends Zend_Form_SubForm
                     $interval = 'P21D';
                 } elseif ($formData["add_show_repeat_type"] == 5) {
                     $interval = 'P28D';
-                } elseif ($formData["add_show_repeat_type"] == 2) {
+                } elseif ($formData["add_show_repeat_type"] == 2 && $formData["add_show_monthly_repeat_type"] == 2) {
                     $interval = 'P1M';
+                } elseif ($formData["add_show_repeat_type"] == 2 && $formData["add_show_monthly_repeat_type"] == 3) {
+                    list($weekNumberOfMonth, $dayOfWeek) =
+                        Application_Service_ShowService::getMonthlyWeeklyRepeatInterval(
+                            new DateTime($start_time, $showTimezone));
                 }
 
                 /* Check first show
@@ -280,12 +291,26 @@ class Application_Form_AddShowWhen extends Zend_Form_SubForm
                                 $this->getElement('add_show_duration')->setErrors(array(_('Cannot schedule overlapping shows')));
                                 break 1;
                             } else {
-                                $repeatShowStart->setTimezone($showTimezone);
-                                $repeatShowEnd->setTimezone($showTimezone);
-                                $repeatShowStart->add(new DateInterval($interval));
-                                $repeatShowEnd->add(new DateInterval($interval));
-                                $repeatShowStart->setTimezone($utc);
-                                $repeatShowEnd->setTimezone($utc);
+                                if ($formData["add_show_repeat_type"] == 2 && $formData["add_show_monthly_repeat_type"] == 3) {
+                                    $monthlyWeeklyStart = new DateTime($repeatShowStart->format("Y-m"),
+                                        new DateTimeZone("UTC"));
+                                    $monthlyWeeklyStart->add(new DateInterval("P1M"));
+                                    $repeatShowStart = clone Application_Service_ShowService::getNextMonthlyWeeklyRepeatDate(
+                                        $monthlyWeeklyStart,
+                                        $formData["add_show_timezone"],
+                                        $formData['add_show_start_time'],
+                                        $weekNumberOfMonth,
+                                        $dayOfWeek);
+                                    $repeatShowEnd = clone $repeatShowStart;
+                                    $repeatShowEnd->add(new DateInterval("PT".$hours."H".$minutes."M"));
+                                } else {
+                                    $repeatShowStart->setTimezone($showTimezone);
+                                    $repeatShowEnd->setTimezone($showTimezone);
+                                    $repeatShowStart->add(new DateInterval($interval));
+                                    $repeatShowEnd->add(new DateInterval($interval));
+                                    $repeatShowStart->setTimezone($utc);
+                                    $repeatShowEnd->setTimezone($utc);
+                                }
                             }
                         }
                     }

@@ -65,8 +65,10 @@ class Application_Common_OsPath{
     }
     
     public static function getBaseDir() {
-        $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
-
+        
+        $CC_CONFIG = Config::getConfig();
+        $baseUrl = $CC_CONFIG['baseDir'];
+        
         if ($baseUrl[0] != "/") {
             $baseUrl = "/".$baseUrl;
         }
@@ -74,7 +76,21 @@ class Application_Common_OsPath{
         if ($baseUrl[strlen($baseUrl) -1] != "/") {
             $baseUrl = $baseUrl."/";
         }
-
+        
+        
         return $baseUrl;
+    }
+    
+    public static function formatDirectoryWithDirectorySeparators($dir)
+    {
+        if ($dir[0] != "/") {
+            $dir = "/".$dir;
+        }
+    
+        if ($dir[strlen($dir) -1] != "/") {
+            $dir = $dir."/";
+        }
+    
+        return $dir;
     }
 }

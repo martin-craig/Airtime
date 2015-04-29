@@ -191,7 +191,7 @@ class PypoFetch(Thread):
 
 
             self.logger.info("Restarting Liquidsoap")
-            subprocess.call('/etc/init.d/airtime-liquidsoap restart', shell=True)
+            subprocess.call('/etc/init.d/airtime-liquidsoap restart', shell=True, close_fds=True)
 
             #Wait here and poll Liquidsoap until it has started up
             self.logger.info("Waiting for Liquidsoap to start")
@@ -548,7 +548,8 @@ class PypoFetch(Thread):
         self.set_bootstrap_variables()
 
         # Bootstrap: since we are just starting up, we need to grab the
-        # most recent schedule.  After that we can just wait for updates.
+        # most recent schedule.  After that we fetch the schedule every 30
+        # minutes or wait for schedule updates to get pushed.
         success = self.persistent_manual_schedule_fetch(max_attempts=5)
 
         if success:

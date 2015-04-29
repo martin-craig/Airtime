@@ -12,11 +12,12 @@ class LoginController extends Zend_Controller_Action
         $CC_CONFIG = Config::getConfig();
         
         $request = $this->getRequest();
+        $stationLocale = Application_Model_Preference::GetDefaultLocale();
         
-        Application_Model_Locale::configureLocalization($request->getcookie('airtime_locale', 'en_CA'));
-        if (Zend_Auth::getInstance()->hasIdentity())
-        {
-
+        Application_Model_Locale::configureLocalization($request->getcookie('airtime_locale', $stationLocale));
+        $auth = Zend_Auth::getInstance();
+        
+        if ($auth->hasIdentity()) {
             $this->_redirect('Showbuilder');
         }
 
@@ -52,10 +53,11 @@ class LoginController extends Zend_Controller_Action
                     //pass to the adapter the submitted username and password
                     $authAdapter->setIdentity($username)
                                 ->setCredential($password);
-
-                    $auth = Zend_Auth::getInstance();
+                    
                     $result = $auth->authenticate($authAdapter);
                     if ($result->isValid()) {
+                        //  Regenerate session id on login to prevent session fixation.
+                        Zend_Session::regenerateId();
                         //all info about this user from the login table omit only the password
                         $userInfo = $authAdapter->getResultRowObject(null, 'password');
 
@@ -66,14 +68,12 @@ class LoginController extends Zend_Controller_Action
                         Application_Model_LoginAttempts::resetAttempts($_SERVER['REMOTE_ADDR']);
                         Application_Model_Subjects::resetLoginAttempts($username);
 
-                        $tempSess = new Zend_Session_Namespace("referrer");
-                        $tempSess->referrer = 'login';
-                        
                         //set the user locale in case user changed it in when logging in
                         Application_Model_Preference::SetUserLocale($locale);
 
                         $this->_redirect('Showbuilder');
                     } else {
+
                         $message = _("Wrong username or password provided. Please try again.");
                         Application_Model_Subjects::increaseLoginAttempts($username);
                         Application_Model_LoginAttempts::increaseAttempts($_SERVER['REMOTE_ADDR']);
@@ -96,7 +96,8 @@ class LoginController extends Zend_Controller_Action
 
     public function logoutAction()
     {
-        Zend_Auth::getInstance()->clearIdentity();
+        $auth = Zend_Auth::getInstance();
+        $auth->clearIdentity();
         $this->_redirect('showbuilder/index');
     }
 
@@ -109,7 +110,9 @@ class LoginController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($baseUrl.'js/airtime/login/password-restore.js?'.$CC_CONFIG['airtime_version'],'text/javascript');
 
         $request = $this->getRequest();
-        Application_Model_Locale::configureLocalization($request->getcookie('airtime_locale', 'en_CA'));
+        $stationLocale = Application_Model_Preference::GetDefaultLocale();
+        
+        Application_Model_Locale::configureLocalization($request->getcookie('airtime_locale', $stationLocale));
 
         if (!Application_Model_Preference::GetEnableSystemEmail()) {
             $this->_redirect('login');
@@ -153,7 +156,9 @@ class LoginController extends Zend_Controller_Action
     public function passwordRestoreAfterAction()
     {
         $request = $this->getRequest();
-        Application_Model_Locale::configureLocalization($request->getcookie('airtime_locale', 'en_CA'));
+        $stationLocale = Application_Model_Preference::GetDefaultLocale();
+        
+        Application_Model_Locale::configureLocalization($request->getcookie('airtime_locale', $stationLocale));
 
         //uses separate layout without a navigation.
         $this->_helper->layout->setLayout('login');
@@ -171,8 +176,10 @@ class LoginController extends Zend_Controller_Action
         $form = new Application_Form_PasswordChange();
         $auth = new Application_Model_Auth();
         $user = CcSubjsQuery::create()->findPK($user_id);
+        
+        $stationLocale = Application_Model_Preference::GetDefaultLocale();
 
-        Application_Model_Locale::configureLocalization($request->getcookie('airtime_locale', 'en_CA'));
+        Application_Model_Locale::configureLocalization($request->getcookie('airtime_locale', $stationLocale));
 
         //check validity of token
         if (!$auth->checkToken($user_id, $token, 'password.restore')) {

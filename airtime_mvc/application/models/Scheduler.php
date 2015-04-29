@@ -182,6 +182,22 @@ class Application_Model_Scheduler
             }
         }
     }
+    
+    private function validateMediaItems($mediaItems)
+    {
+        foreach ($mediaItems as $mediaItem)
+        {
+            $id = $mediaItem["id"];
+            if ($mediaItem["type"] === "playlist")
+            {
+                $playlist = new Application_Model_Playlist($id, $this->con);
+                if ($playlist->containsMissingFiles()) {
+                    throw new Exception(_("Cannot schedule a playlist that contains missing files."));
+                }
+            }
+        }
+        return true;
+    }
 
     /*
      * @param $id
@@ -515,6 +531,9 @@ class Application_Model_Scheduler
     private function insertAfter($scheduleItems, $mediaItems, $filesToInsert=null, $adjustSched=true, $moveAction=false)
     {
         try {
+            // temporary fix for CC-5665
+            set_time_limit(180);
+
             $affectedShowInstances = array();
 
             //dont want to recalculate times for moved items
@@ -587,15 +606,14 @@ class Application_Model_Scheduler
                  * to that show
                  */
                 if ($linked) {
-                    $instance_sql = "SELECT * FROM cc_show_instances ".
-                        "WHERE show_id = ".$ccShow["id"];
-                    $instances = Application_Common_Database::prepareAndExecute(
-                        $instance_sql);
+                    $instances = CcShowInstancesQuery::create()
+                        ->filterByDbShowId($ccShow["id"])
+                        ->filterByDbStarts(gmdate("Y-m-d H:i:s"), Criteria::GREATER_THAN)
+                        ->find();
                 } else {
-                    $instance_sql = "SELECT * FROM cc_show_instances ".
-                        "WHERE id = ".$schedule["instance"];
-                    $instances = Application_Common_Database::prepareAndExecute(
-                        $instance_sql);
+                    $instances = CcShowInstancesQuery::create()
+                        ->filterByDbId($schedule["instance"])
+                        ->find();
                 }
 
                 $excludePositions = array();
@@ -603,7 +621,8 @@ class Application_Model_Scheduler
                     //reset
                     $this->applyCrossfades = true;
 
-                    $instanceId = $instance["id"];
+                    //$instanceId = $instance["id"];
+                    $instanceId = $instance->getDbId();
                     if ($id !== 0) {
                         /* We use the selected cursor's position to find the same
                          * positions in every other linked instance
@@ -629,7 +648,7 @@ class Application_Model_Scheduler
                             //show instance has no scheduled tracks
                             if (empty($pos)) {
                                 $pos = 0;
-                                $nextStartDT = new DateTime($instance["starts"], new DateTimeZone("UTC"));
+                                $nextStartDT = new DateTime($instance->getDbStarts(), new DateTimeZone("UTC"));
                             } else {
 
                                 $linkedItem_sql = "SELECT ends FROM cc_schedule ".
@@ -655,7 +674,7 @@ class Application_Model_Scheduler
                     }
                     //selected empty row to add after
                     else {
-                        $showStartDT = new DateTime($instance["starts"], new DateTimeZone("UTC"));
+                        $showStartDT = new DateTime($instance->getDbStarts(), new DateTimeZone("UTC"));
                         $nextStartDT = $this->findNextStartTime($showStartDT, $instanceId);
 
                         //first item in show so start position counter at 0
@@ -702,6 +721,9 @@ class Application_Model_Scheduler
                     $doInsert = false;
                     $doUpdate = false;
                     $values = array();
+
+                    //array that stores the cc_file ids so we can update the is_scheduled flag
+                    $fileIds = array();
 
                     foreach ($filesToInsert as &$file) {
                         //item existed previously and is being moved.
@@ -762,6 +784,7 @@ class Application_Model_Scheduler
                             case 0:
                                 $fileId = $file["id"];
                                 $streamId = "null";
+                                $fileIds[] = $fileId;
                                 break;
                             case 1:
                                 $streamId = $file["id"];
@@ -829,11 +852,7 @@ class Application_Model_Scheduler
                             }
                         };
                     }
-                    // update is_scheduled flag for each cc_file
-                    $fileIds = array();
-                    foreach ($filesToInsert as &$file) {
-                        $fileIds[] = $file["id"];
-                    }
+
                     $selectCriteria = new Criteria();
                     $selectCriteria->add(CcFilesPeer::ID, $fileIds, Criteria::IN);
                     $selectCriteria->addAnd(CcFilesPeer::IS_SCHEDULED, false);
@@ -933,7 +952,7 @@ class Application_Model_Scheduler
         $ccShowInstance = CcShowInstancesQuery::create()->findPk($instanceId);
         $ccShow = $ccShowInstance->getCcShow();
         if ($ccShow->isLinked()) {
-            return $ccShow->getCcShowInstancess();
+            return $ccShow->getFutureCcShowInstancess();
         } else {
             return array($ccShowInstance);
         }
@@ -948,6 +967,7 @@ class Application_Model_Scheduler
         $this->con->beginTransaction();
 
         try {
+            $this->validateMediaItems($mediaItems); //Check for missing files, etc.
             $this->validateRequest($scheduleItems, true);
 
             /*
@@ -1092,35 +1112,36 @@ class Application_Model_Scheduler
 
             $removedItems = CcScheduleQuery::create()->findPks($scheduledIds);
 
-            //check to make sure all items selected are up to date
-            foreach ($removedItems as $removedItem) {
+            // This array is used to keep track of every show instance that was
+            // effected by the track deletion. It will be used later on to
+            // remove gaps in the schedule and adjust crossfade times.
+            $effectedInstanceIds = array();
 
+            foreach ($removedItems as $removedItem) {
                 $instance = $removedItem->getCcShowInstances($this->con);
+                $effectedInstanceIds[] = $instance->getDbId();
 
                 //check if instance is linked and if so get the schedule items
                 //for all linked instances so we can delete them too
                 if (!$cancelShow && $instance->getCcShow()->isLinked()) {
                     //returns all linked instances if linked
                     $ccShowInstances = $this->getInstances($instance->getDbId());
+
                     $instanceIds = array();
                     foreach ($ccShowInstances as $ccShowInstance) {
                         $instanceIds[] = $ccShowInstance->getDbId();
                     }
-                    /*
-                     * Find all the schedule items that are in the same position
-                     * as the selected item by the user.
-                     * The position of each track is the same across each linked instance
-                     */
+                    $effectedInstanceIds = array_merge($effectedInstanceIds, $instanceIds);
+                    
+                    // Delete the same track, represented by $removedItem, in
+                    // each linked show instance.
                     $itemsToDelete = CcScheduleQuery::create()
                         ->filterByDbPosition($removedItem->getDbPosition())
                         ->filterByDbInstanceId($instanceIds, Criteria::IN)
-                        ->find();
-                    foreach ($itemsToDelete as $item) {
-                        if (!$removedItems->contains($item)) {
-                            $removedItems->append($item);
-                        }
-                    }
+                        ->filterByDbId($removedItem->getDbId(), Criteria::NOT_EQUAL)
+                        ->delete($this->con);
                 }
+                
 
                 //check to truncate the currently playing item instead of deleting it.
                 if ($removedItem->isCurrentItem($this->epochNow)) {
@@ -1145,29 +1166,11 @@ class Application_Model_Scheduler
                 } else {
                     $removedItem->delete($this->con);
                 }
-
-                // update is_scheduled in cc_files but only if
-                // the file is not scheduled somewhere else
-                $fileId = $removedItem->getDbFileId();
-                // check if the removed item is scheduled somewhere else
-                $futureScheduledFiles = Application_Model_Schedule::getAllFutureScheduledFiles();
-                if (!is_null($fileId) && !in_array($fileId, $futureScheduledFiles)) {
-                     $db_file = CcFilesQuery::create()->findPk($fileId, $this->con);
-                     $db_file->setDbIsScheduled(false)->save($this->con);
-                }
             }
+            Application_Model_StoredFile::updatePastFilesIsScheduled();
 
             if ($adjustSched === true) {
-                //get the show instances of the shows we must adjust times for.
-                foreach ($removedItems as $item) {
-
-                    $instance = $item->getDBInstanceId();
-                    if (!in_array($instance, $showInstances)) {
-                        $showInstances[] = $instance;
-                    }
-                }
-
-                foreach ($showInstances as $instance) {
+                foreach ($effectedInstanceIds as $instance) {
                     $this->removeGaps($instance);
                     $this->calculateCrossfades($instance);
                 }
@@ -1175,7 +1178,7 @@ class Application_Model_Scheduler
 
             //update the status flag in cc_schedule.
             $instances = CcShowInstancesQuery::create()
-                ->filterByPrimaryKeys($showInstances)
+                ->filterByPrimaryKeys($effectedInstanceIds)
                 ->find($this->con);
 
             foreach ($instances as $instance) {

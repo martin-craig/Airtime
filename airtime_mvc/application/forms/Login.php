@@ -10,6 +10,10 @@ class Application_Form_Login extends Zend_Form
         // Set the method for the display form to POST
         $this->setMethod('post');
 
+        $this->addElement('hash', 'csrf', array(
+           'salt' => 'unique'
+        ));
+
         $this->setDecorators(array(
             array('ViewScript', array('viewScript' => 'form/login.phtml'))
         ));
@@ -49,13 +53,11 @@ class Application_Form_Login extends Zend_Form
         $locale->setMultiOptions(Application_Model_Locale::getLocales());
         $locale->setDecorators(array('ViewHelper'));
         $this->addElement($locale);
+        $this->setDefaults(array(
+            "locale" => Application_Model_Locale::getUserLocale()
+        ));
 
-        $recaptchaNeeded = false;
         if (Application_Model_LoginAttempts::getAttempts($_SERVER['REMOTE_ADDR']) >= 3) {
-            $recaptchaNeeded = true;
-        }
-        if ($recaptchaNeeded) {
-            // recaptcha
             $this->addRecaptcha();
         }
 
@@ -76,7 +78,8 @@ class Application_Form_Login extends Zend_Form
         $pubKey = '6Ld4JsISAAAAAIxUKT4IjjOGi3DHqdoH2zk6WkYG';
         $privKey = '6Ld4JsISAAAAAJynYlXdrE4hfTReTSxYFe5szdyv';
 
-        $recaptcha = new Zend_Service_ReCaptcha($pubKey, $privKey);
+        $params= array('ssl' => true);
+        $recaptcha = new Zend_Service_ReCaptcha($pubKey, $privKey, $params);
 
         $captcha = new Zend_Form_Element_Captcha('captcha',
             array(

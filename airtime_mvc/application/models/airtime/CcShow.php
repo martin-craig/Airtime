@@ -47,6 +47,9 @@ class CcShow extends BaseCcShow {
      */
     public function getFirstCcShowDay($criteria = null, PropelPDO $con = null)
     {
+        /*CcShowPeer::clearInstancePool();
+        CcShowPeer::clearRelatedInstancePool();*/
+
         if(null === $this->collCcShowDayss || null !== $criteria) {
             if ($this->isNew() && null === $this->collCcShowDayss) {
                 // return empty collection
@@ -247,7 +250,6 @@ class CcShow extends BaseCcShow {
         return CcShowInstancesQuery::create(null, $criteria)
                     ->filterByCcShow($this)
                     ->filterByDbModifiedInstance(false)
-                    ->filterByDbEnds(gmdate("Y-m-d H:i:s"), criteria::GREATER_THAN)
                     ->orderByDbId()
                     ->find($con);
 
@@ -278,12 +280,47 @@ class CcShow extends BaseCcShow {
         }
         return $instanceIds;
     }
+    
+    /*
+     * Returns cc_show_instance ids where the start time is greater than
+     * the current time
+     * 
+     * If a Criteria object is passed in Propel will always fetch the 
+     * results from the database and not return a cached collection
+     */
+    public function getFutureInstanceIds($criteria = null) {
+        $instanceIds = array();
+        foreach ($this->getFutureCcShowInstancess($criteria) as $ccShowInstance) {
+            $instanceIds[] = $ccShowInstance->getDbId();
+        }
+        return $instanceIds;
+    }
 
+    //what is this??
     public function getOtherInstances($instanceId)
     {
         return CcShowInstancesQuery::create()
             ->filterByCcShow($this)
             ->filterByDbId($instanceId, Criteria::NOT_EQUAL)
             ->find();
+    }
+
+    public function getShowInfo()
+    {
+        $info = array();
+        if ($this->getDbId() == null) {
+            return $info;
+        } else {
+            $info['name'] = $this->getDbName();
+            $info['id'] = $this->getDbId();
+            $info['url'] = $this->getDbUrl();
+            $info['genre'] = $this->getDbGenre();
+            $info['description'] = $this->getDbDescription();
+            $info['color'] = $this->getDbColor();
+            $info['background_color'] = $this->getDbBackgroundColor();
+            $info['linked'] = $this->getDbLinked();
+            return $info;
+        }
+
     }
 } // CcShow

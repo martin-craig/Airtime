@@ -1,5 +1,15 @@
 <?php
 
+//  Only enable cookie secure if we are supporting https.
+//  Ideally, this would always be on and we would force https,
+//  but the default installation configs are likely to be installed by
+//  amature users on the setup that does not have https.  Forcing
+//  cookie_secure on non https would result in confusing login problems.
+if(!empty($_SERVER['HTTPS'])){
+        ini_set('session.cookie_secure', '1');
+}
+ini_set('session.cookie_httponly', '1');
+
 error_reporting(E_ALL|E_STRICT);
 
 function exception_error_handler($errno, $errstr, $errfile, $errline)
@@ -64,15 +74,19 @@ try {
         $application->bootstrap()->run();
     }
 } catch (Exception $e) {
-    echo $e->getMessage();
-    echo "<pre>";
-    echo $e->getTraceAsString();
-    echo "</pre>";
-    Logging::info($e->getMessage());
+
+    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+
+    Logging::error($e->getMessage());
     if (VERBOSE_STACK_TRACE) {
-        Logging::info($e->getTraceAsString());
+        echo $e->getMessage();
+        echo "<pre>";
+        echo $e->getTraceAsString();
+        echo "</pre>";
+        Logging::error($e->getTraceAsString());
     } else {
-        Logging::info($e->getTrace());
+        Logging::error($e->getTrace());
     }
+    throw $e;
 }
 

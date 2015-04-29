@@ -17,35 +17,25 @@ class PlayouthistoryController extends Zend_Controller_Action
             ->addActionContext('update-list-item', 'json')
             ->addActionContext('update-file-item', 'json')
             ->initContext();
-        }
-
+    }
+    
     public function indexAction()
     {
         $CC_CONFIG = Config::getConfig();
-
-        $request = $this->getRequest();
-
         $baseUrl = Application_Common_OsPath::getBaseDir();
 
-        //default time is the last 24 hours.
-        $now = time();
-        $from = $request->getParam("from", $now - (24*60*60));
-        $to = $request->getParam("to", $now);
-
-        $utcTimezone = new DateTimeZone("UTC");
-        $displayTimeZone = new DateTimeZone(Application_Model_Preference::GetTimezone());
-
-        $start = DateTime::createFromFormat("U", $from, $utcTimezone);
-        $start->setTimezone($displayTimeZone);
-        $end = DateTime::createFromFormat("U", $to, $utcTimezone);
-        $end->setTimezone($displayTimeZone);
+        list($startsDT, $endsDT) = Application_Common_HTTPHelper::getStartEndFromRequest($this->getRequest());
+       
+        $userTimezone = new DateTimeZone(Application_Model_Preference::GetUserTimezone());
+        $startsDT->setTimezone($userTimezone);
+        $endsDT->setTimezone($userTimezone);
 
         $form = new Application_Form_DateRange();
         $form->populate(array(
-            'his_date_start' => $start->format("Y-m-d"),
-            'his_time_start' => $start->format("H:i"),
-            'his_date_end' => $end->format("Y-m-d"),
-            'his_time_end' => $end->format("H:i")
+            'his_date_start' => $startsDT->format("Y-m-d"),
+            'his_time_start' => $startsDT->format("H:i"),
+            'his_date_end' => $endsDT->format("Y-m-d"),
+            'his_time_end' => $endsDT->format("H:i")
         ));
 
         $this->view->date_form = $form;
@@ -87,15 +77,10 @@ class PlayouthistoryController extends Zend_Controller_Action
     {
     	try {
 	        $request = $this->getRequest();
-	        $current_time = time();
-
-	        $params = $request->getParams();
-
-	        $starts_epoch = $request->getParam("start", $current_time - (60*60*24));
-	        $ends_epoch = $request->getParam("end", $current_time);
-
-	        $startsDT = DateTime::createFromFormat("U", $starts_epoch, new DateTimeZone("UTC"));
-	        $endsDT = DateTime::createFromFormat("U", $ends_epoch, new DateTimeZone("UTC"));
+    		$params = $request->getParams();
+    		$instance = $request->getParam("instance_id", null);
+	        
+            list($startsDT, $endsDT) = Application_Common_HTTPHelper::getStartEndFromRequest($request);
 
 	        $historyService = new Application_Service_HistoryService();
 	        $r = $historyService->getFileSummaryData($startsDT, $endsDT, $params);
@@ -114,18 +99,12 @@ class PlayouthistoryController extends Zend_Controller_Action
     public function itemHistoryFeedAction()
     {
     	try {
-	        $request = $this->getRequest();
-	        $current_time = time();
-
-	        $params = $request->getParams();
-
-	        $starts_epoch = $request->getParam("start", $current_time - (60*60*24));
-	        $ends_epoch = $request->getParam("end", $current_time);
-	        $instance = $request->getParam("instance_id", null);
-
-	        $startsDT = DateTime::createFromFormat("U", $starts_epoch, new DateTimeZone("UTC"));
-	        $endsDT = DateTime::createFromFormat("U", $ends_epoch, new DateTimeZone("UTC"));
-
+    		$request = $this->getRequest();
+    		$params = $request->getParams();
+    		$instance = $request->getParam("instance_id", null);
+	        
+            list($startsDT, $endsDT) = Application_Common_HTTPHelper::getStartEndFromRequest($request);
+    		
 	        $historyService = new Application_Service_HistoryService();
 	        $r = $historyService->getPlayedItemData($startsDT, $endsDT, $params, $instance);
 
@@ -144,12 +123,10 @@ class PlayouthistoryController extends Zend_Controller_Action
     {
     	try {
     		$request = $this->getRequest();
-    		$current_time = time();
-    		$starts_epoch = $request->getParam("start", $current_time - (60*60*24));
-    		$ends_epoch = $request->getParam("end", $current_time);
-
-    		$startsDT = DateTime::createFromFormat("U", $starts_epoch, new DateTimeZone("UTC"));
-    		$endsDT = DateTime::createFromFormat("U", $ends_epoch, new DateTimeZone("UTC"));
+    		$params = $request->getParams();
+    		$instance = $request->getParam("instance_id", null);
+	        
+            list($startsDT, $endsDT) = Application_Common_HTTPHelper::getStartEndFromRequest($request);
 
     		$historyService = new Application_Service_HistoryService();
     		$shows = $historyService->getShowList($startsDT, $endsDT);
